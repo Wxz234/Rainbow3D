@@ -1,1 +1,4 @@
-add_executable(Rainbow3D Rainbow3D.cpp)
+add_executable(Rainbow3D WIN32
+	
+	Rainbow3D.cpp
+)
