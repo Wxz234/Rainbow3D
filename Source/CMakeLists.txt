@@ -1,3 +1,13 @@
+add_library(imgui STATIC 
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_demo.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_draw.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_tables.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_widgets.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends/imgui_impl_win32.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends/imgui_impl_dx11.cpp
+)
+
 add_subdirectory("Debug")
 add_subdirectory("JSON")
 add_subdirectory("UI")
