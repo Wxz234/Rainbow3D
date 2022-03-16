@@ -1,5 +1,4 @@
-#include <Rainbow3D.h>
-#include <Windows.h>
+
 
 namespace {
 	//int64_t _filesize(const wchar_t*file) {
