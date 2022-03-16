@@ -1,4 +1,5 @@
-
+#include "JSON/JSON.h"
+#include "Debug/Debug.h"
 
 namespace {
 	//int64_t _filesize(const wchar_t*file) {
