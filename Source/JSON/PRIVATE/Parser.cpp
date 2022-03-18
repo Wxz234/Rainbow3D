@@ -2,6 +2,9 @@
 #include "Debug/Debug.h"
 #include <Windows.h>
 namespace {
+	struct UTF8_String {
+		UTF8_String(const char *str,unsigned int num){}
+	};
 
 	void _readfile(const wchar_t* file) {
 		auto _handle = CreateFileW(file, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -26,6 +29,7 @@ namespace {
 			RAINBOW3D_EXIT(GetLastError());
 		}
 
+		delete[]ReadBuffer;
 	}
 }
 
