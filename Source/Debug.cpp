@@ -1,4 +1,4 @@
-#include "Debug/Debug.h"
+#include "Debug.h"
 #include <Windows.h>
 #include <debugapi.h>
 #include <string>

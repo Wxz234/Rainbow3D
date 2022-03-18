@@ -1,5 +1,5 @@
-#include "JSON/JSON.h"
-#include "Debug/Debug.h"
+#include "JSON.h"
+#include "Debug.h"
 #include <Windows.h>
 namespace {
 	struct UTF8_String {
