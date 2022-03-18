@@ -1,7 +1,8 @@
-#include "Debug.h"
 #include <Windows.h>
 #include <debugapi.h>
 #include <string>
+#include "Debug.h"
+
 void RAINBOW3D_EXIT(unsigned int exitcode) {
 	ExitProcess(exitcode);
 }
