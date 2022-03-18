@@ -11,9 +11,9 @@ add_library(imgui STATIC
 
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
-	"ParseJSON.cpp"
 	"Debug.cpp"
 	"UI.cpp"
 	"GLTF.cpp"
+	"Blob.cpp"
 )
 target_include_directories(Rainbow3D PUBLIC "${PROJECT_SOURCE_DIR}/Include")
