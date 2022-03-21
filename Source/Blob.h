@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <cstddef>
+#include <cstdint>
 class BinaryBlob {
 public:
 	BinaryBlob() {}
@@ -14,5 +14,5 @@ public:
 	bool IsEmpty() const noexcept;
 	bool IsUTF8() const noexcept;
 private:
-	std::vector<std::byte> m_binaryData;
+	std::vector<uint8_t> m_binaryData;
 };
