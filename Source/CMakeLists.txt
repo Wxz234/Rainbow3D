@@ -12,8 +12,8 @@ add_library(imgui STATIC
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
 	"Debug.cpp"
-	"UI.cpp"
-	"Mesh.h"
+	"Vector.cpp"
+	"Mesh.cpp"
 )
 
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)
