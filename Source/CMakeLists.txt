@@ -13,8 +13,7 @@ add_executable(Rainbow3D WIN32
 	"Rainbow3D.cpp"
 	"Debug.cpp"
 	"UI.cpp"
-	"GLTF.cpp"
-	"Blob.cpp"
+	"Mesh.h"
 )
 target_include_directories(Rainbow3D PUBLIC "${PROJECT_SOURCE_DIR}/Include")
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)
