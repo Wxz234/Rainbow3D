@@ -14,6 +14,8 @@ add_executable(Rainbow3D WIN32
 	"Debug.cpp"
 	"Vector.cpp"
 	"Mesh.cpp"
+	"Device.cpp"
 )
 
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)
+target_link_libraries(Rainbow3D PUBLIC d3d11.lib)
