@@ -24,9 +24,9 @@ void BinaryBlob::LoadFromFile(const wchar_t* filePath) {
 	DWORD dwRead = 0;
 	if (FALSE == ReadFile(_handle, m_binaryData.data(), _size, &dwRead, NULL)) {
 		RAINBOW3D_ERROR(L"Failed to read file.");
-		CloseHandle(_handle);
 		m_binaryData.clear();
 	}
+	CloseHandle(_handle);
 }
 
 bool BinaryBlob::IsEmpty() const noexcept {
