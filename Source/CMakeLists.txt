@@ -15,5 +15,5 @@ add_executable(Rainbow3D WIN32
 	"UI.cpp"
 	"Mesh.h"
 )
-target_include_directories(Rainbow3D PUBLIC "${PROJECT_SOURCE_DIR}/Include")
+
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)
