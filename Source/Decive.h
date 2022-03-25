@@ -7,7 +7,6 @@
 
 struct Device {
     Device(HWND hwnd, uint32_t w, uint32_t h) {
-		m_hwnd = hwnd;
 		UINT createDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)  
 		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -47,13 +46,13 @@ struct Device {
 		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsSwapChainDesc = {};
 		fsSwapChainDesc.Windowed = TRUE;
 
-		dxgiFactory->CreateSwapChainForHwnd(m_Device.Get(), m_hwnd, &_desc, &fsSwapChainDesc, nullptr, &m_swapChain);
-		dxgiFactory->MakeWindowAssociation(m_hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
-
+		dxgiFactory->CreateSwapChainForHwnd(m_Device.Get(), hwnd, &_desc, &fsSwapChainDesc, nullptr, &m_swapChain);
+		dxgiFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
 	}
-    ~Device() {
-
-    }
+	Device(const Device&) = delete;
+	Device(Device&&) noexcept = default;
+	Device& operator=(const Device&) = delete;
+	Device& operator=(Device&&) noexcept = default;
 
 	void Present() {
 		m_swapChain->Present(1, 0);
@@ -63,6 +62,5 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_DeviceContext;
     Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
-	HWND m_hwnd;
 };
 

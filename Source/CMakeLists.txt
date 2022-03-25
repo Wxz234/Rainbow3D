@@ -7,15 +7,16 @@ add_library(imgui STATIC
 	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends/imgui_impl_win32.cpp
 	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends/imgui_impl_dx11.cpp
 )
-
+target_include_directories(imgui PUBLIC ${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87 ${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends)
 
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
-	"Debug.cpp"
+	"Log.cpp"
 	"Vector.cpp"
 	"Mesh.cpp"
 	"Device.cpp"
+	"Window.cpp"
 )
 
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)
-target_link_libraries(Rainbow3D PUBLIC d3d11.lib)
+target_link_libraries(Rainbow3D PUBLIC imgui d3d11)
