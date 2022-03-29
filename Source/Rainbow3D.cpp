@@ -9,6 +9,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     Device device(window.GetHWND(), width, height);
     window.Run(
         [&device]() {
+            float color[4] = { 1,1,0,1 };
+            device.ClearRTV(color);
             device.Present();
         }
     );

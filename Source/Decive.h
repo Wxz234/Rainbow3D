@@ -48,6 +48,9 @@ struct Device {
 
 		dxgiFactory->CreateSwapChainForHwnd(m_Device.Get(), hwnd, &_desc, &fsSwapChainDesc, nullptr, &m_swapChain);
 		dxgiFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
+		
+		m_swapChain->GetBuffer(0, IID_PPV_ARGS(&m_rt));
+		m_Device->CreateRenderTargetView(m_rt.Get(), NULL, &m_rtv);
 	}
 	Device(const Device&) = delete;
 	Device(Device&&) noexcept = default;
@@ -58,9 +61,15 @@ struct Device {
 		m_swapChain->Present(1, 0);
 	}
 
+	void ClearRTV(const float ColorRGBA[4]) {
+		m_DeviceContext->ClearRenderTargetView(m_rtv.Get(), ColorRGBA);
+	}
+
 private:
     Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_DeviceContext;
     Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_rt;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
 };
 

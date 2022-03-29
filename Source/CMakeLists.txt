@@ -16,6 +16,7 @@ add_executable(Rainbow3D WIN32
 	"Mesh.cpp"
 	"Device.cpp"
 	"Window.cpp"
+	"Model.cpp"
 )
 
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)
