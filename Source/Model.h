@@ -1,6 +1,7 @@
 #pragma once
 #include "Decive.h"
-class GLTFModel {
+
+class GLTFModel  {
 public:
 	GLTFModel() {}
 	GLTFModel(const GLTFModel&) = default;
@@ -9,3 +10,6 @@ public:
 	GLTFModel& operator=(GLTFModel&&) noexcept = default;
 private:
 };
+
+GLTFModel* CreateGLTFModelFromFile(const wchar_t* file);
+void DestroyGLTFModel(GLTFModel* model);

@@ -11,3 +11,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
+
+Window* CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height) {
+    return new Window(title, width, height);
+}
+
+void DestroyRenderWindow(Window* window) {
+    delete window;
+}

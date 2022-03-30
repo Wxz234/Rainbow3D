@@ -4,6 +4,7 @@
 #include <dxgi1_6.h>
 #include <wrl/client.h>
 #include <cstdint>
+#include "Window.h"
 
 struct Device {
     Device(HWND hwnd, uint32_t w, uint32_t h) {
@@ -73,3 +74,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
 };
 
+Device* CreateDevice(Window* window, uint32_t w, uint32_t h);
+void DestroyDevice(Device* device);
