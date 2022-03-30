@@ -7,6 +7,5 @@ public:
 	GLTFModel(GLTFModel&&) noexcept = default;
 	GLTFModel& operator=(const GLTFModel&) = default;
 	GLTFModel& operator=(GLTFModel&&) noexcept = default;
+private:
 };
-
-GLTFModel LoadGLTF(const wchar_t *file);
