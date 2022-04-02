@@ -1,7 +1,11 @@
 #pragma once
 #include "Decive.h"
+class Model {
+public:
+	virtual ~Model() {}
+};
 
-class GLTFModel  {
+class GLTFModel :public Model {
 public:
 	GLTFModel() {}
 	GLTFModel(const GLTFModel&) = default;
@@ -12,4 +16,4 @@ private:
 };
 
 GLTFModel* CreateGLTFModelFromFile(const wchar_t* file);
-void DestroyGLTFModel(GLTFModel* model);
+void DestroyModel(Model* model);
