@@ -1,13 +1,13 @@
 add_library(imgui STATIC 
-	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui.cpp
-	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_demo.cpp
-	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_draw.cpp
-	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_tables.cpp
-	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/imgui_widgets.cpp
-	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends/imgui_impl_win32.cpp
-	${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends/imgui_impl_dx11.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_demo.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_draw.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_tables.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_widgets.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_win32.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_dx11.cpp
 )
-target_include_directories(imgui PUBLIC ${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87 ${PROJECT_SOURCE_DIR}/ThirdParty/imgui-1.87/backends)
+target_include_directories(imgui PUBLIC ${PROJECT_SOURCE_DIR}/ThirdParty/imgui ${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends)
 
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
