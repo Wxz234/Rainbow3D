@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
 project(Rainbow3D)
-
 set(CMAKE_CXX_STANDARD 23)
-add_subdirectory(Source)
+add_subdirectory("ThirdParty")
+add_subdirectory("Source")
