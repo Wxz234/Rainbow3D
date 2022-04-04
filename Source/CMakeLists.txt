@@ -9,4 +9,4 @@ add_executable(Rainbow3D WIN32
 )
 
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)
-target_link_libraries(Rainbow3D PRIVATE  d3d11)
+target_link_libraries(Rainbow3D PRIVATE d3d11 imgui nlohmann_json::nlohmann_json)

@@ -9,6 +9,5 @@ add_library(imgui STATIC
 )
 target_include_directories(imgui PRIVATE imgui imgui/backends)
 
-#find_package(nlohmann_json 3.2.0 REQUIRED)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(nlohmann_json)
-find_package(nlohmann_json 3.2.0 REQUIRED)
