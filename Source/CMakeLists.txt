@@ -2,7 +2,6 @@ add_executable(Rainbow3D WIN32
 	"Rainbow3D.cpp"
 	"Log.cpp"
 	"Vector.cpp"
-	"Mesh.cpp"
 	"Device.cpp"
 	"Window.cpp"
 	"Model.cpp"
