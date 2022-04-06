@@ -1,5 +1,5 @@
 #pragma once
-#include "Decive.h"
+#include "Device.h"
 class Model {
 public:
 	virtual ~Model() {}

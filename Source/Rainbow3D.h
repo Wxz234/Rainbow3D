@@ -1,4 +1,7 @@
 #pragma once
-
-namespace Rainbow3D{
-}
+#include <Windows.h>
+#include "Device.h"
+#include "Log.h"
+#include "Model.h"
+#include "Vector.h"
+#include "Window.h"
