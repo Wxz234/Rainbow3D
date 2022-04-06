@@ -11,6 +11,12 @@ add_executable(Rainbow3D WIN32
 	"Window.h"
 	"Model.cpp"
 	"Model.h"
+	"JSON.cpp"
+	"JSON.h"
+	"WICTextureLoader11.cpp"
+	"WICTextureLoader11.h"
+	"DDSTextureLoader11.cpp"
+	"DDSTextureLoader11.h"
 )
 
 target_compile_definitions(Rainbow3D PUBLIC UNICODE)

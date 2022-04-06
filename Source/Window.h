@@ -51,6 +51,7 @@ namespace Rainbow3D {
     private:
         HWND hwnd;
     };
+
     Window* CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height);
     void DestroyRenderWindow(Window* window);
 }
