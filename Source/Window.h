@@ -1,8 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include <memory>
 #include <cstdint>
-#include <thread>
 namespace Rainbow3D {
     LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
