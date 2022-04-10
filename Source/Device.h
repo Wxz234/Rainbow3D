@@ -1,6 +1,9 @@
 #pragma once
 #include "Window.h"
+
+#include <Windows.h>
 #include <d3d11.h>
+#include <cstdint>
 
 namespace Rainbow3D {
 	struct Device {
