@@ -1,4 +1,3 @@
-#include <Windows.h>
 #include "Rainbow3D.h"
 
 void Draw(Rainbow3D::Device* device,float x) {

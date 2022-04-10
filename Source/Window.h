@@ -22,7 +22,7 @@ namespace Rainbow3D {
             AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX, FALSE);
             hwnd = CreateWindowExW(0, L"Rainbow3D", title, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
         }
-
+        ~Window() {}
         Window(const Window&) = delete;
         Window(Window&& r) noexcept = delete;
         Window& operator=(const Window&) = delete;
