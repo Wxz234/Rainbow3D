@@ -1,4 +1,5 @@
 #include "Rainbow3D.h"
+#include <Windows.h>
 
 void Draw(Rainbow3D::Device* device,float x) {
     float color[4] = { x,1,0,1 };
