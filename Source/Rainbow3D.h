@@ -6,3 +6,5 @@
 #include "Window.h"
 #include "DDSTextureLoader11.h"
 #include "WICTextureLoader11.h"
+
+#include <Windows.h>
