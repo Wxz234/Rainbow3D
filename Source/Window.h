@@ -1,5 +1,7 @@
 #pragma once
 #include <Windows.h>
+#include <functional>
+#include <utility>
 #include <cstdint>
 namespace Rainbow3D {
     LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -34,6 +36,8 @@ namespace Rainbow3D {
 
         template <typename _Fn, typename ..._Args>
         void Run(_Fn&& _Fx, _Args&&... _Ax) {
+            auto func = std::bind(std::forward<_Fn>(_Fx), std::forward<_Args>(_Ax)...);
+
             ShowWindow(hwnd, SW_SHOW);
             MSG msg = {};
             while (WM_QUIT != msg.message) {
@@ -43,7 +47,7 @@ namespace Rainbow3D {
                     DispatchMessage(&msg);
                 }
                 else {
-                    _Fx(_Ax...);
+                    func();
                 }
             }
         }
