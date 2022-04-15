@@ -3,6 +3,7 @@
 void Draw(Rainbow3D::Device* device,float x) {
     float color[4] = { x,1,0,1 };
     device->ClearRTV(color);
+    Rainbow3D::Logger::Error(L"123");
     device->Present();
 }
 

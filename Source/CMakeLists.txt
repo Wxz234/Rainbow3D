@@ -1,8 +1,8 @@
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
-	"Log.cpp"
-	"Log.h"
+	"Logger.cpp"
+	"Logger.h"
 	"Vector.cpp"
 	"Vector.h"
 	"Device.cpp"

@@ -1,6 +1,6 @@
 #pragma once
 #include "Device.h"
-#include "Log.h"
+#include "Logger.h"
 #include "Model.h"
 #include "Vector.h"
 #include "Window.h"
