@@ -1,4 +1,6 @@
 #pragma once
+#include <fstream>
+
 namespace Rainbow3D {
 	class JsonObject final {
 	public:
@@ -11,4 +13,7 @@ namespace Rainbow3D {
 	private:
 
 	};
+
+	std::ifstream& operator>>(std::ifstream& i, JsonObject& j);
+
 }
