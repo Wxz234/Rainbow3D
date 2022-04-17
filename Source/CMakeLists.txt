@@ -1,23 +1,12 @@
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
-	"Logger.cpp"
-	"Logger.h"
-	"Vector.cpp"
-	"Vector.h"
-	"Device.cpp"
-	"Device.h"
-	"Window.cpp"
-	"Window.h"
-	"Model.cpp"
-	"Model.h"
-	"Json.cpp"
-	"Json.h"
-	"WICTextureLoader11.cpp"
-	"WICTextureLoader11.h"
-	"DDSTextureLoader11.cpp"
-	"DDSTextureLoader11.h"
+	"Core/Json/Json.cpp"
+	"Platform/Window/Window.cpp"
+	"Render/Device/Device.cpp"
+	"Render/Device/D11Device.cpp"
 )
 
-target_compile_definitions(Rainbow3D PUBLIC UNICODE)
+target_compile_definitions(Rainbow3D PRIVATE UNICODE)
+target_include_directories(Rainbow3D PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(Rainbow3D PRIVATE d3d11)

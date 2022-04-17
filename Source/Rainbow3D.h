@@ -1,11 +1,6 @@
 #pragma once
-#include <Windows.h>
-#include "Device.h"
-#include "Logger.h"
-#include "Model.h"
-#include "Vector.h"
-#include "Window.h"
-#include "Json.h"
-#include "DDSTextureLoader11.h"
-#include "WICTextureLoader11.h"
-
+#include "Core/Json/Json.h"
+#include "Core/Log/Log.h"
+#include "Platform/Window/Window.h"
+#include "Render/Device/Device.h"
+#include "Render/Device/D11Device.h"
