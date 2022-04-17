@@ -8,7 +8,9 @@ namespace Rainbow3D {
 
     class Window {
     public:
-        Window(const wchar_t* title, uint32_t width, uint32_t height) {
+        Window(const wchar_t* title, uint32_t _width, uint32_t _height) {
+            width = _width;
+            height = _height;
             WNDCLASSEXW wcex = {};
             wcex.cbSize = sizeof(WNDCLASSEXW);
             wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -34,6 +36,14 @@ namespace Rainbow3D {
             return hwnd;
         }
 
+        uint32_t GetWidth() const noexcept {
+            return width;
+        }
+
+        uint32_t GetHeight() const noexcept {
+            return height;
+        }
+
         template <typename _Fn, typename ..._Args>
         void Run(_Fn&& _Fx, _Args&&... _Ax) {
             auto func = std::bind(std::forward<_Fn>(_Fx), std::forward<_Args>(_Ax)...);
@@ -54,6 +64,8 @@ namespace Rainbow3D {
 
     private:
         HWND hwnd;
+        uint32_t width; 
+        uint32_t height;
     };
 
     Window* CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height);
