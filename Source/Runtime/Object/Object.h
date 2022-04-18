@@ -12,4 +12,8 @@ namespace Rainbow3D {
 		RObject& operator=(RObject&&) noexcept = default;
 		virtual void Tick() = 0;
 	};
+
+	inline void DestroyRObject(RObject* obj) {
+		delete obj;
+	}
 }
