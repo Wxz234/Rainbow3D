@@ -5,15 +5,11 @@ namespace Rainbow3D {
 	public:
 		RObject() {}
 		virtual ~RObject() {}
-
 		RObject(const RObject&) = default;
 		RObject& operator=(const RObject&) = default;
 		RObject(RObject&&) noexcept = default;
 		RObject& operator=(RObject&&) noexcept = default;
-		virtual void Tick() = 0;
 	};
 
-	inline void DestroyRObject(RObject* obj) {
-		delete obj;
-	}
+	void DestroyRObject(RObject* obj);
 }

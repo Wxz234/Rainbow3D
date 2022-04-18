@@ -3,8 +3,6 @@
 namespace Rainbow3D {
 	class Model : public RObject {
 	public:
-
 	};
 
-	void DestroyModel(Model* model);
 }

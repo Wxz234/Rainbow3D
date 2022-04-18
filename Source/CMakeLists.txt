@@ -1,6 +1,7 @@
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
+	"Runtime/Object/Object.cpp"
 	"Runtime/Model/Model.cpp"
 	"Runtime/Model/GLTF.cpp"
 	"Core/Json/Json.cpp"
