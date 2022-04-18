@@ -1,7 +1,7 @@
 #pragma once
 #include "Runtime/Object/Object.h"
 #include "Runtime/Model/Model.h"
-#include "Runtime/Model/glTF.h"
+#include "Runtime/Model/GLTF.h"
 #include "Core/Json/Json.h"
 #include "Core/Log/Log.h"
 #include "Platform/Window/Window.h"

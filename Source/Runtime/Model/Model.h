@@ -5,4 +5,6 @@ namespace Rainbow3D {
 	public:
 
 	};
+
+	void DestroyModel(Model* model);
 }
