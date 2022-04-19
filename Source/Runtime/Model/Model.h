@@ -5,4 +5,5 @@ namespace Rainbow3D {
 	public:
 	};
 
+	Model* CreateModelFromFile(const wchar_t* file);
 }
