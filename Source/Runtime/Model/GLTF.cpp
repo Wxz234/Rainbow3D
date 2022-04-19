@@ -5,9 +5,10 @@
 #include <fstream>
 
 namespace Rainbow3D {
-    bool utf8Check(const char* string,int length)
+    bool utf8Check(const char* string,int length,int &u8_size)
     {
-        for (int i = 0; i < length; ++i)
+        u8_size = 0;
+        for (int i = 0; i < length; ++i, ++u8_size)
         {
             auto c = (unsigned char)string[i];
             int n;
@@ -46,14 +47,14 @@ namespace Rainbow3D {
 		ifs.read(buffer, filesize);
 		ifs.close();
 
-        if (!utf8Check(buffer, filesize)) {
-            ifs.close();
+        int u8_size;
+        if (!utf8Check(buffer, filesize, u8_size)) {
+
             delete[]buffer;
             Rainbow3D_Error("File format is not UTF8.");
             return nullptr;
         }
 
-        ifs.close();
         delete[]buffer;
 		return new GLTFModel;
 	}
