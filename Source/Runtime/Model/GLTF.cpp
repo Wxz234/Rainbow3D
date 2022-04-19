@@ -5,7 +5,7 @@
 #include <fstream>
 
 namespace Rainbow3D {
-    bool utf8_check_is_valid(const char* string,int length)
+    bool utf8Check(const char* string,int length)
     {
         for (int i = 0; i < length; ++i)
         {
@@ -46,7 +46,7 @@ namespace Rainbow3D {
 		ifs.read(buffer, filesize);
 		ifs.close();
 
-        if (!utf8_check_is_valid(buffer, filesize)) {
+        if (!utf8Check(buffer, filesize)) {
             ifs.close();
             delete[]buffer;
             Rainbow3D_Error("File format is not UTF8.");
