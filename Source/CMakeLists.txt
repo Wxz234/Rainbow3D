@@ -2,7 +2,6 @@ add_executable(Rainbow3D WIN32
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
 	"Core/Log/Log.cpp"
-	"Core/Log/Log.h"
 	"Platform/Window/Window.cpp"
 	"Render/Device/GraphicsDevice.cpp"
 )
