@@ -4,6 +4,8 @@ add_executable(Rainbow3D WIN32
 	"Core/Log/Log.cpp"
 	"Platform/Window/Window.cpp"
 	"Render/Device/GraphicsDevice.cpp"
+	"Runtime/Model/Model.cpp"
+	"Runtime/Mesh/Mesh.cpp"
 )
 
 target_compile_definitions(Rainbow3D PRIVATE UNICODE)
