@@ -1,0 +1,5 @@
+set(third_party_folder "ThirdParty")
+if(NOT TARGET nlohmann_json)
+    add_subdirectory(nlohmann_json)
+    set_target_properties(nlohmann_json PROPERTIES FOLDER "nlohmann_json")
+endif()
