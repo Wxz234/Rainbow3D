@@ -2,7 +2,7 @@
 #include "Render/Device/GraphicsDevice.h"
 namespace Rainbow3D {
 	class Model {
-	public:
-
 	};
+
+	Model* CreateModelFromFile(GraphcisDevice* device, const wchar_t* file);
 }
