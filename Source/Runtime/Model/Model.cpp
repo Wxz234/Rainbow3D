@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Runtime/Model/Model.h"
+#include "Utility/JSON/json.hpp"
 #include <string>
 namespace Rainbow3D {
 	Model* CreateModelFromFile(GraphcisDevice* device, const wchar_t* file) {
