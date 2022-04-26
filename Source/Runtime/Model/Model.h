@@ -6,4 +6,5 @@ namespace Rainbow3D {
 	};
 
 	Model* CreateModelFromFile(GraphcisDevice* device, const wchar_t* file);
+	void DestroyModel(Model* model);
 }
