@@ -6,7 +6,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"Rainbow3D", width, height);
     auto device = CreateGraphcisDevice(window->GetContext(), width, height);
 
-    auto model = CreateModelFromFile(device, L"C:\\Users\\WangYuzhi\\Desktop\\glTF-Sample-Models-master\\2.0\\TriangleWithoutIndices\\glTF\\TriangleWithoutIndices.gltf");
     window->Run(
         [](GraphcisDevice* device) { 
             float color[4] = { 0.42f,0.27f,0.88f,1.f }; 
