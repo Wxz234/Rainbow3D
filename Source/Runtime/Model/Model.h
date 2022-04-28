@@ -1,5 +1,6 @@
 #pragma once
 #include "Render/Device/GraphicsDevice.h"
+#include "Runtime/Mesh/Mesh.h"
 namespace Rainbow3D {
 	class Model {
 

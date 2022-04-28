@@ -5,4 +5,5 @@
 #include "Platform/Window/Window.h"
 #include "Render/Device/GraphicsDevice.h"
 #include "Runtime/Model/Model.h"
+#include "Runtime/Model/GLTF.h"
 #include "Runtime/Mesh/Mesh.h"

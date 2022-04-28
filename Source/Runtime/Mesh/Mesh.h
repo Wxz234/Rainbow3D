@@ -3,6 +3,7 @@
 namespace Rainbow3D {
 	class Mesh {
 	public:
-		virtual ~Mesh() {}
+		Mesh(GraphcisDevice* device);
+		~Mesh() {}
 	};
 }
