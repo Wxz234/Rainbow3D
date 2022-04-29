@@ -7,6 +7,7 @@ add_executable(Rainbow3D WIN32
 	"Runtime/Model/Model.cpp"
 	"Runtime/Model/GLTF.cpp"
 	"Runtime/Mesh/Mesh.cpp"
+	"Runtime/Scene/Scene.cpp"
 )
 
 target_compile_definitions(Rainbow3D PRIVATE UNICODE)
