@@ -66,6 +66,9 @@ namespace Rainbow3D {
 	void GraphcisDevice::ClearRTV(const float ColorRGBA[4]) {
 		pimpl->m_DeviceContext->ClearRenderTargetView(pimpl->m_rtv.Get(), ColorRGBA);
 	}
+	void* GraphcisDevice::GetNativeDevice() const noexcept {
+		return pimpl->m_Device.Get();
+	}
 
 	GraphcisDevice* CreateGraphcisDevice(WindowContext* context, uint32 width, uint32 height) {
 		return new GraphcisDevice(context, width, height);

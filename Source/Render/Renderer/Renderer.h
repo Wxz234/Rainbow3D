@@ -7,7 +7,7 @@ namespace Rainbow3D {
 		DISABLE_COPY_AND_ASSIGN(Renderer)
 
 		Renderer(GraphcisDevice* device) :_device(device) {}
-	private:
+	protected:
 		GraphcisDevice* _device;
 	};
 }

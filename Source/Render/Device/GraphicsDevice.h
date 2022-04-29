@@ -12,6 +12,7 @@ namespace Rainbow3D {
 
 		void Present();
 		void ClearRTV(const float ColorRGBA[4]);
+		void* GetNativeDevice() const noexcept;
 	private:
 		class impl;
 		impl* pimpl;

@@ -6,6 +6,7 @@ add_executable(Rainbow3D WIN32
 	"Render/Device/GraphicsDevice.cpp"
 	"Render/Renderer/Renderer.cpp"
 	"Render/Renderer/MeshRenderer.cpp"
+	"Render/Texture/Texture.cpp"
 	"Runtime/Model/Model.cpp"
 	"Runtime/Model/GLTF.cpp"
 	"Runtime/Mesh/Mesh.cpp"
