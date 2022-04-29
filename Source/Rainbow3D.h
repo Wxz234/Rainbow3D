@@ -5,6 +5,7 @@
 #include "Core/Math/Vector.h"
 #include "Platform/Window/Window.h"
 #include "Render/Device/GraphicsDevice.h"
+#include "Render/Renderer/Renderer.h"
 #include "Runtime/Model/Model.h"
 #include "Runtime/Model/GLTF.h"
 #include "Runtime/Mesh/Mesh.h"

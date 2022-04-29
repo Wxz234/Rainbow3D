@@ -13,10 +13,7 @@ namespace Rainbow3D {
 
 		std::vector<Vector3> vertices;
 		std::vector<Vector3> normals;
-		std::vector<Vector2> uv0;
-		std::vector<Vector2> uv1;
-		std::vector<Vector2> uv2;
-		std::vector<Vector2> uv3;
+		std::vector<Vector2> uv;
 		std::vector<uint16> triangles;
 	};
 }

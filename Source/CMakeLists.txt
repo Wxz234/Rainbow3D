@@ -4,6 +4,8 @@ add_executable(Rainbow3D WIN32
 	"Core/Log/Log.cpp"
 	"Platform/Window/Window.cpp"
 	"Render/Device/GraphicsDevice.cpp"
+	"Render/Renderer/Renderer.cpp"
+	"Render/Renderer/MeshRenderer.cpp"
 	"Runtime/Model/Model.cpp"
 	"Runtime/Model/GLTF.cpp"
 	"Runtime/Mesh/Mesh.cpp"
