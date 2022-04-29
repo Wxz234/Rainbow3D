@@ -10,4 +10,7 @@ namespace Rainbow3D {
 	private:
 		Mesh* _mesh;
 	};
+
+	MeshRenderer* CreateMeshRenderer(GraphcisDevice* device, Mesh* mesh);
+	
 }
