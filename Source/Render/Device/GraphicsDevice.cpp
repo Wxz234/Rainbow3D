@@ -69,6 +69,9 @@ namespace Rainbow3D {
 	void* GraphcisDevice::GetNativeDevice() const noexcept {
 		return pimpl->m_Device.Get();
 	}
+	void* GraphcisDevice::GetNativeDeviceContext() const noexcept {
+		return pimpl->m_DeviceContext.Get();
+	}
 
 	GraphcisDevice* CreateGraphcisDevice(WindowContext* context, uint32 width, uint32 height) {
 		return new GraphcisDevice(context, width, height);
