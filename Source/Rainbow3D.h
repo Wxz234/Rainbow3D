@@ -7,6 +7,8 @@
 #include "Render/Device/GraphicsDevice.h"
 #include "Render/Renderer/Renderer.h"
 #include "Render/Renderer/MeshRenderer.h"
+#include "Render/RenderTarget/GBuffer.h"
 #include "Runtime/Model/Model.h"
 #include "Runtime/Model/GLTF.h"
 #include "Runtime/Mesh/Mesh.h"
+#include "Runtime/Camera/Camera.h"

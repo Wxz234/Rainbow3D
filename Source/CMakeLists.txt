@@ -7,10 +7,12 @@ add_executable(Rainbow3D WIN32
 	"Render/Renderer/Renderer.cpp"
 	"Render/Renderer/MeshRenderer.cpp"
 	"Render/Texture/Texture.cpp"
+	"Render/RenderTarget/GBuffer.cpp"
 	"Runtime/Model/Model.cpp"
 	"Runtime/Model/GLTF.cpp"
 	"Runtime/Mesh/Mesh.cpp"
 	"Runtime/Scene/Scene.cpp"
+	"Runtime/Camera/Camera.cpp"
 )
 
 target_compile_definitions(Rainbow3D PRIVATE UNICODE)
