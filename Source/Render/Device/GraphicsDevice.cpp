@@ -83,7 +83,7 @@ namespace Rainbow3D {
 		pimpl->m_Device->CreatePixelShader(pimpl->m_psblob->GetBufferPointer(), pimpl->m_psblob->GetBufferSize(), nullptr, &pimpl->m_PixelShader);
 		const D3D11_INPUT_ELEMENT_DESC inputLayout = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		pimpl->m_Device->CreateInputLayout(&inputLayout, 1, pimpl->m_vsblob->GetBufferPointer(), pimpl->m_vsblob->GetBufferSize(), &pimpl->m_pVertexLayout);
-		// 将着色器绑定到渲染管线
+
 		pimpl->m_DeviceContext->VSSetShader(pimpl->m_VertexShader.Get(), nullptr, 0);
 		pimpl->m_DeviceContext->PSSetShader(pimpl->m_PixelShader.Get(), nullptr, 0);
 
@@ -99,12 +99,12 @@ namespace Rainbow3D {
 	void GraphcisDevice::ClearRTV(const float ColorRGBA[4]) {
 		pimpl->m_DeviceContext->ClearRenderTargetView(pimpl->m_rtv.Get(), ColorRGBA);
 	}
-	void* GraphcisDevice::GetNativeDevice() const noexcept {
-		return pimpl->m_Device.Get();
-	}
-	void* GraphcisDevice::GetNativeDeviceContext() const noexcept {
-		return pimpl->m_DeviceContext.Get();
-	}
+	//void* GraphcisDevice::GetNativeDevice() const noexcept {
+	//	return pimpl->m_Device.Get();
+	//}
+	//void* GraphcisDevice::GetNativeDeviceContext() const noexcept {
+	//	return pimpl->m_DeviceContext.Get();
+	//}
 
 	GraphcisDevice* CreateGraphcisDevice(WindowContext* context, uint32 width, uint32 height) {
 		return new GraphcisDevice(context, width, height);
