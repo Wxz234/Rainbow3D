@@ -2,7 +2,9 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <dxgi1_2.h>
+#include <d3dcompiler.h>
 #include <wrl/client.h>
+#include <string>
 namespace Rainbow3D {
 	class WindowContext {
 	public:
@@ -17,6 +19,11 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_rt;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
+		Microsoft::WRL::ComPtr<ID3DBlob> m_vsblob;
+		Microsoft::WRL::ComPtr<ID3DBlob> m_psblob;
+		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pVertexLayout;
 	};
 
 	GraphcisDevice::GraphcisDevice(WindowContext* context, uint32 width, uint32 height) {
@@ -54,6 +61,32 @@ namespace Rainbow3D {
 		dxgiFactory->MakeWindowAssociation(context->hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
 		pimpl->m_swapChain->GetBuffer(0, IID_PPV_ARGS(&pimpl->m_rt));
 		pimpl->m_Device->CreateRenderTargetView(pimpl->m_rt.Get(), NULL, &pimpl->m_rtv);
+
+		
+		//D3DCompile()
+		std::string v_str = R"(
+			float4 main( float4 pos : POSITION ) : SV_POSITION
+			{
+				return pos;
+			}
+		)";
+		std::string p_str = R"(
+			float4 main() : SV_TARGET
+			{
+				return float4(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+		)";
+
+		D3DCompile(v_str.c_str(), v_str.size(), nullptr, nullptr, nullptr, "main", "vs_5_0", 0, 0, &pimpl->m_vsblob, nullptr);
+		D3DCompile(p_str.c_str(), p_str.size(), nullptr, nullptr, nullptr, "main", "ps_5_0", 0, 0, &pimpl->m_psblob, nullptr);
+		pimpl->m_Device->CreateVertexShader(pimpl->m_vsblob->GetBufferPointer(), pimpl->m_vsblob->GetBufferSize(), nullptr, &pimpl->m_VertexShader);
+		pimpl->m_Device->CreatePixelShader(pimpl->m_psblob->GetBufferPointer(), pimpl->m_psblob->GetBufferSize(), nullptr, &pimpl->m_PixelShader);
+		const D3D11_INPUT_ELEMENT_DESC inputLayout = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		pimpl->m_Device->CreateInputLayout(&inputLayout, 1, pimpl->m_vsblob->GetBufferPointer(), pimpl->m_vsblob->GetBufferSize(), &pimpl->m_pVertexLayout);
+		// 将着色器绑定到渲染管线
+		pimpl->m_DeviceContext->VSSetShader(pimpl->m_VertexShader.Get(), nullptr, 0);
+		pimpl->m_DeviceContext->PSSetShader(pimpl->m_PixelShader.Get(), nullptr, 0);
+
 	}
 	GraphcisDevice::~GraphcisDevice() {
 		delete pimpl;
