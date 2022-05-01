@@ -3,9 +3,10 @@
 #include <d3d11.h>
 using namespace Rainbow3D;
 
-void Draw(GraphcisDevice* device,GBuffer *gbuffer) {
+void Draw(GraphcisDevice* device, GBuffer* gbuffer) {
     ID3D11Device* pDevice = reinterpret_cast<ID3D11Device*>(device->GetNativeDevice());
     ID3D11DeviceContext* pContext = reinterpret_cast<ID3D11DeviceContext*>(device->GetNativeDeviceContext());
+    
     float color[4] = { 0.3f,0.5f,0.7f,1.f };
     device->ClearRTV(color);
     device->Present();
