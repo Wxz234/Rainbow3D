@@ -2,7 +2,27 @@
 #include "Core/CoreTypes.h"
 #include "Core/CoreDef.h"
 #include "Platform/Window/Window.h"
+
 namespace Rainbow3D {
+
+	class GraphicsList {
+	public:
+		GraphicsList();
+		~GraphicsList();
+		GraphicsList(const GraphicsList& r);
+		GraphicsList(GraphicsList&& r) noexcept;
+		GraphicsList& operator=(const GraphicsList& r);
+		GraphicsList& operator=(GraphicsList&& r) noexcept;
+
+		class Impl;
+		Impl* GetImpl() {
+			return pimpl;
+		}
+
+		void Close();
+	private:
+		Impl* pimpl;
+	};
 
 	class GraphicsDevice final {
 	public:
@@ -13,34 +33,19 @@ namespace Rainbow3D {
 
 		void Present();
 		void ClearRTV(const float ColorRGBA[4]);
+		void ExecuteCommandList(GraphicsList* list);
 
-		//void* GetNativeDevice() const noexcept;
-		//void* GetNativeDeviceContext() const noexcept;
+		class Impl;
+		Impl* GetImpl() {
+			return pimpl;
+		}
 	private:
-		class impl;
-		impl* pimpl;
-
-		friend class GraphicsList;
+		Impl* pimpl;
 	};
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height);
 	void DestroyGraphicsDevice(GraphicsDevice* device);
 
-	class GraphicsList {
-	public:
-
-		GraphicsList(GraphicsDevice* device = nullptr);
-		~GraphicsList();
-		GraphicsList(const GraphicsList& r);
-		GraphicsList(GraphicsList&& r) noexcept;
-		GraphicsList& operator=(const GraphicsList& r);
-		GraphicsList& operator=(GraphicsList&& r) noexcept;
-
-		void FinishCommandList();
-	private:
-		class impl;
-		impl* pimpl;
-	};
-
-	//GraphicsList *CreateGraphics
+	GraphicsList* CreateGraphicsList(GraphicsDevice* device);
+	void DestroyGraphicsList(GraphicsList* list);
 }

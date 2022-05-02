@@ -14,7 +14,7 @@ namespace Rainbow3D {
 		HWND hwnd = NULL;
 	};
 
-	class GraphicsDevice::impl {
+	class GraphicsDevice::Impl {
 	public:
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_DeviceContext;
@@ -28,8 +28,14 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pVertexLayout;
 	};
 
+	class GraphicsList::Impl {
+	public:
+		Microsoft::WRL::ComPtr<ID3D11CommandList> m_list;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_defferContext;
+	};
+
 	GraphicsDevice::GraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
-		pimpl = new impl;
+		pimpl = new Impl;
 		UINT createDeviceFlags = 0;
 #ifdef _DEBUG 
 		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -101,12 +107,11 @@ namespace Rainbow3D {
 	void GraphicsDevice::ClearRTV(const float ColorRGBA[4]) {
 		pimpl->m_DeviceContext->ClearRenderTargetView(pimpl->m_rtv.Get(), ColorRGBA);
 	}
-	//void* GraphicsDevice::GetNativeDevice() const noexcept {
-	//	return pimpl->m_Device.Get();
-	//}
-	//void* GraphicsDevice::GetNativeDeviceContext() const noexcept {
-	//	return pimpl->m_DeviceContext.Get();
-	//}
+
+	void GraphicsDevice::ExecuteCommandList(GraphicsList* list) {
+		auto* impl = list->GetImpl();
+		pimpl->m_DeviceContext->ExecuteCommandList(impl->m_list.Get(), TRUE);
+	}
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
 		return new GraphicsDevice(context, width, height);
@@ -116,33 +121,22 @@ namespace Rainbow3D {
 		delete device;
 	}
 
-	class GraphicsList::impl {
-	public:
-		Microsoft::WRL::ComPtr<ID3D11CommandList> m_list;
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_defferContext;
-	};
-
-
-
-	GraphicsList::GraphicsList(GraphicsDevice* device) {
-		pimpl = new impl;
-		if (device) {
-			device->pimpl->m_Device->CreateDeferredContext(0, &pimpl->m_defferContext);
-		}
+	GraphicsList::GraphicsList() {
+		pimpl = new Impl;
 	}
 	GraphicsList::~GraphicsList() {
 		delete pimpl;
 	}
 
 	GraphicsList::GraphicsList(const GraphicsList& r) {
-		pimpl = new impl;
+		pimpl = new Impl;
 
 		pimpl->m_list = r.pimpl->m_list;
 		pimpl->m_defferContext = r.pimpl->m_defferContext;
 	}
 
 	GraphicsList::GraphicsList(GraphicsList&& r) noexcept {
-		pimpl = new impl;
+		pimpl = new Impl;
 
 		pimpl->m_list = std::move(r.pimpl->m_list);
 		pimpl->m_defferContext = std::move(r.pimpl->m_defferContext);
@@ -163,7 +157,21 @@ namespace Rainbow3D {
 		return *this;
 	}
 
-	void GraphicsList::FinishCommandList() {
+
+	void GraphicsList::Close() {
 		pimpl->m_defferContext->FinishCommandList(FALSE, &pimpl->m_list);
+	}
+
+	GraphicsList* CreateGraphicsList(GraphicsDevice* device) {
+		auto temp = new GraphicsList;
+		GraphicsDevice::Impl* impl = device->GetImpl();
+		GraphicsList::Impl* g_impl = temp->GetImpl();
+		if (device) {
+			impl->m_Device->CreateDeferredContext(0, &g_impl->m_defferContext);
+		}
+		return temp;
+	}
+	void DestroyGraphicsList(GraphicsList* list) {
+		delete list;
 	}
 }
