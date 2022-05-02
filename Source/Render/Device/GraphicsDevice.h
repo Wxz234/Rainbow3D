@@ -1,6 +1,5 @@
 #pragma once
 #include "Core/CoreTypes.h"
-#include "Core/CoreDef.h"
 #include "Platform/Window/Window.h"
 
 namespace Rainbow3D {
