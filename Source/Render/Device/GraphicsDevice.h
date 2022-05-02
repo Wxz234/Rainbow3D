@@ -5,42 +5,21 @@
 
 namespace Rainbow3D {
 
-	class GraphicsList {
+	class GraphicsObject {
 	public:
-		GraphicsList();
-		~GraphicsList();
-		GraphicsList(const GraphicsList& r);
-		GraphicsList(GraphicsList&& r) noexcept;
-		GraphicsList& operator=(const GraphicsList& r);
-		GraphicsList& operator=(GraphicsList&& r) noexcept;
-
-		class Impl;
-		Impl* GetImpl() {
-			return pimpl;
-		}
-
-		void Close();
-	private:
-		Impl* pimpl;
+		virtual ~GraphicsObject() {}
 	};
 
-	class GraphicsDevice final {
+	class GraphicsList : public GraphicsObject {
 	public:
-		DISABLE_COPY_AND_ASSIGN(GraphicsDevice)
+		virtual void Close() = 0;
+	};
 
-		GraphicsDevice(WindowContext* context, uint32 width, uint32 height);
-		~GraphicsDevice();
-
-		void Present();
-		void ClearRTV(const float ColorRGBA[4]);
-		void ExecuteCommandList(GraphicsList* list);
-
-		class Impl;
-		Impl* GetImpl() {
-			return pimpl;
-		}
-	private:
-		Impl* pimpl;
+	class GraphicsDevice : public GraphicsObject {
+	public:
+		virtual void Present() = 0;
+		virtual void ClearRTV(const float ColorRGBA[4]) = 0;
+		virtual void ExecuteCommandList(GraphicsList* list) = 0;
 	};
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height);
