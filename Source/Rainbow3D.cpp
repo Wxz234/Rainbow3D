@@ -4,10 +4,14 @@
 using namespace Rainbow3D;
 
 void Draw(GraphicsDevice* device, GraphicsList* list) {
+    auto rt = device->GetSwapChainRenderTarget();
+    float color[4] = { 0.3f,0.5f,0.0f,1.f };
+    list->ClearRTV(rt, color);
     list->Close();
     device->ExecuteCommandList(list);
-    float color[4] = { 0.3f,0.5f,0.7f,1.f };
-    device->ClearRTV(color);
+    color[2] = 1.0f;
+    device->ClearRTV(rt, color);
+    device->ClearRTV(rt, color);
     device->Present();
 }
 
@@ -17,8 +21,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto device = CreateGraphicsDevice(window->GetContext(), width, height);
     auto list = CreateGraphicsList(device);
     window->Run(Draw, device, list);
-    DestroyGraphicsList(list);
-    DestroyGraphicsDevice(device);
+    DestroyGraphicsObject(list);
+    DestroyGraphicsObject(device);
     DestroyRenderWindow(window);
     return 0;
 }

@@ -12,11 +12,33 @@ namespace Rainbow3D {
 		HWND hwnd = NULL;
 	};
 
+
+	class dx11RenderTarget : public RenderTarget {
+	public:
+
+		void* GetNativePointer() const noexcept {
+			return m_rtv.Get();
+		}
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_rt;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
+	};
+
+
 	class dx11GraphicsList : public  GraphicsList {
 	public:
+
+		void ClearRTV(RenderTarget* rt, const float ColorRGBA[4]) {
+			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
+			m_defferContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
+		}
 		void Close() {
 			m_defferContext->FinishCommandList(FALSE, &m_list);
 		}
+
+		void* GetNativePointer() const noexcept {
+			return m_list.Get();
+		}
+
 		Microsoft::WRL::ComPtr<ID3D11CommandList> m_list;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_defferContext;
 	};
@@ -56,8 +78,8 @@ namespace Rainbow3D {
 
 			dxgiFactory->CreateSwapChainForHwnd(m_Device.Get(), context->hwnd, &_desc, &fsSwapChainDesc, nullptr, &m_swapChain);
 			dxgiFactory->MakeWindowAssociation(context->hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
-			m_swapChain->GetBuffer(0, IID_PPV_ARGS(&m_rt));
-			m_Device->CreateRenderTargetView(m_rt.Get(), NULL, &m_rtv);
+			m_swapChain->GetBuffer(0, IID_PPV_ARGS(&rt.m_rt));
+			m_Device->CreateRenderTargetView(rt.m_rt.Get(), NULL, &rt.m_rtv);
 
 			//D3DCompile()
 			std::string v_str = R"(
@@ -88,31 +110,41 @@ namespace Rainbow3D {
 			m_swapChain->Present(1, 0);
 		}
 
-		virtual void ClearRTV(const float ColorRGBA[4]) {
-			m_DeviceContext->ClearRenderTargetView(m_rtv.Get(), ColorRGBA);
+		virtual void ClearRTV(RenderTarget* mrt,const float ColorRGBA[4]) {
+			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(mrt);
+			m_DeviceContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
 		}
 		virtual void ExecuteCommandList(GraphicsList* list) {
 			auto dx11list = reinterpret_cast<dx11GraphicsList*>(list);
 			m_DeviceContext->ExecuteCommandList(dx11list->m_list.Get(), TRUE);
 		}
 
+		virtual RenderTarget* GetSwapChainRenderTarget() {
+			return &rt;
+		}
+
+		void* GetNativePointer() const noexcept {
+			return m_Device.Get();
+		}
+
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_DeviceContext;
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_rt;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
+
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VertexShader;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
 		Microsoft::WRL::ComPtr<ID3DBlob> m_vsblob;
 		Microsoft::WRL::ComPtr<ID3DBlob> m_psblob;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pVertexLayout;
+
+		dx11RenderTarget rt;
 	};
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
 		return new dx11GraphicsDevice(context, width, height);
 	}
-	void DestroyGraphicsDevice(GraphicsDevice* device) {
-		delete device;
+	void DestroyGraphicsObject(GraphicsObject* object) {
+		delete object;
 	}
 
 	GraphicsList* CreateGraphicsList(GraphicsDevice* device) {
@@ -121,9 +153,6 @@ namespace Rainbow3D {
 
 		dx11device->m_Device->CreateDeferredContext(0, &dx11list->m_defferContext);
 		return dx11list;
-	}
-	void DestroyGraphicsList(GraphicsList* list) {
-		delete list;
 	}
 
 }
