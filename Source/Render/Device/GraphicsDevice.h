@@ -31,4 +31,11 @@ namespace Rainbow3D {
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height);
 	GraphicsList* CreateGraphicsList(GraphicsDevice* device);
+
+	enum class FORMAT {
+		RGBA8_UNORM
+	};
+
+	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format);
+
 }

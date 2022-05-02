@@ -9,9 +9,6 @@ void Draw(GraphicsDevice* device, GraphicsList* list) {
     list->ClearRTV(rt, color);
     list->Close();
     device->ExecuteCommandList(list);
-    color[2] = 1.0f;
-    device->ClearRTV(rt, color);
-    device->ClearRTV(rt, color);
     device->Present();
 }
 
@@ -20,7 +17,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"Rainbow3D", width, height);
     auto device = CreateGraphicsDevice(window->GetContext(), width, height);
     auto list = CreateGraphicsList(device);
+    auto rendertarget = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
     window->Run(Draw, device, list);
+    DestroyGraphicsObject(rendertarget);
     DestroyGraphicsObject(list);
     DestroyGraphicsObject(device);
     DestroyRenderWindow(window);
