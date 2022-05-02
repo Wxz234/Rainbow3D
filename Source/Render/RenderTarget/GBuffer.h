@@ -5,11 +5,11 @@ namespace Rainbow3D {
 	class GBuffer {
 	public:
 		DISABLE_COPY_AND_ASSIGN(GBuffer)
-		GBuffer(GraphcisDevice* device) : _device(device) {}
+		GBuffer(GraphicsDevice* device) : _device(device) {}
 	private:
-		GraphcisDevice* _device;
+		GraphicsDevice* _device;
 	};
 
-	GBuffer* CreateGBuffer(GraphcisDevice* device);
+	GBuffer* CreateGBuffer(GraphicsDevice* device);
 	void DestroyGBuffer(GBuffer* gbuffer);
 }

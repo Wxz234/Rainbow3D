@@ -1,18 +1,20 @@
 #include "Render/Device/GraphicsDevice.h"
 #include <Windows.h>
-#include <d3d11.h>
+#include <d3d11_4.h>
 #include <dxgi1_2.h>
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 #include <string>
+#include <memory>
+#include <utility>
 namespace Rainbow3D {
+
 	class WindowContext {
 	public:
 		HWND hwnd = NULL;
 	};
 
-
-	class GraphcisDevice::impl {
+	class GraphicsDevice::impl {
 	public:
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_DeviceContext;
@@ -26,7 +28,7 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pVertexLayout;
 	};
 
-	GraphcisDevice::GraphcisDevice(WindowContext* context, uint32 width, uint32 height) {
+	GraphicsDevice::GraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
 		pimpl = new impl;
 		UINT createDeviceFlags = 0;
 #ifdef _DEBUG 
@@ -88,29 +90,80 @@ namespace Rainbow3D {
 		pimpl->m_DeviceContext->PSSetShader(pimpl->m_PixelShader.Get(), nullptr, 0);
 
 	}
-	GraphcisDevice::~GraphcisDevice() {
+	GraphicsDevice::~GraphicsDevice() {
 		delete pimpl;
 	}
 
-	void GraphcisDevice::Present() {
+	void GraphicsDevice::Present() {
 		pimpl->m_swapChain->Present(1, 0);
 	}
 
-	void GraphcisDevice::ClearRTV(const float ColorRGBA[4]) {
+	void GraphicsDevice::ClearRTV(const float ColorRGBA[4]) {
 		pimpl->m_DeviceContext->ClearRenderTargetView(pimpl->m_rtv.Get(), ColorRGBA);
 	}
-	//void* GraphcisDevice::GetNativeDevice() const noexcept {
+	//void* GraphicsDevice::GetNativeDevice() const noexcept {
 	//	return pimpl->m_Device.Get();
 	//}
-	//void* GraphcisDevice::GetNativeDeviceContext() const noexcept {
+	//void* GraphicsDevice::GetNativeDeviceContext() const noexcept {
 	//	return pimpl->m_DeviceContext.Get();
 	//}
 
-	GraphcisDevice* CreateGraphcisDevice(WindowContext* context, uint32 width, uint32 height) {
-		return new GraphcisDevice(context, width, height);
+	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
+		return new GraphicsDevice(context, width, height);
 	}
 
-	void DestroyGraphcisDevice(GraphcisDevice* device) {
+	void DestroyGraphicsDevice(GraphicsDevice* device) {
 		delete device;
+	}
+
+	class GraphicsList::impl {
+	public:
+		Microsoft::WRL::ComPtr<ID3D11CommandList> m_list;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_defferContext;
+	};
+
+
+
+	GraphicsList::GraphicsList(GraphicsDevice* device) {
+		pimpl = new impl;
+		if (device) {
+			device->pimpl->m_Device->CreateDeferredContext(0, &pimpl->m_defferContext);
+		}
+	}
+	GraphicsList::~GraphicsList() {
+		delete pimpl;
+	}
+
+	GraphicsList::GraphicsList(const GraphicsList& r) {
+		pimpl = new impl;
+
+		pimpl->m_list = r.pimpl->m_list;
+		pimpl->m_defferContext = r.pimpl->m_defferContext;
+	}
+
+	GraphicsList::GraphicsList(GraphicsList&& r) noexcept {
+		pimpl = new impl;
+
+		pimpl->m_list = std::move(r.pimpl->m_list);
+		pimpl->m_defferContext = std::move(r.pimpl->m_defferContext);
+	}
+
+	GraphicsList& GraphicsList::operator=(const GraphicsList& r) {
+		if (std::addressof(r) != this) {
+			pimpl->m_list = r.pimpl->m_list;
+			pimpl->m_defferContext = r.pimpl->m_defferContext;
+		}
+		return *this;
+	}
+	GraphicsList& GraphicsList::operator=(GraphicsList&& r) noexcept {
+		if (std::addressof(r) != this) {
+			pimpl->m_list = std::move(r.pimpl->m_list);
+			pimpl->m_defferContext = std::move(r.pimpl->m_defferContext);
+		}
+		return *this;
+	}
+
+	void GraphicsList::FinishCommandList() {
+		pimpl->m_defferContext->FinishCommandList(FALSE, &pimpl->m_list);
 	}
 }

@@ -4,12 +4,12 @@
 #include "Platform/Window/Window.h"
 namespace Rainbow3D {
 
-	class GraphcisDevice final {
+	class GraphicsDevice final {
 	public:
-		DISABLE_COPY_AND_ASSIGN(GraphcisDevice)
+		DISABLE_COPY_AND_ASSIGN(GraphicsDevice)
 
-		GraphcisDevice(WindowContext* context, uint32 width, uint32 height);
-		~GraphcisDevice();
+		GraphicsDevice(WindowContext* context, uint32 width, uint32 height);
+		~GraphicsDevice();
 
 		void Present();
 		void ClearRTV(const float ColorRGBA[4]);
@@ -19,20 +19,28 @@ namespace Rainbow3D {
 	private:
 		class impl;
 		impl* pimpl;
+
+		friend class GraphicsList;
 	};
 
-	GraphcisDevice* CreateGraphcisDevice(WindowContext* context, uint32 width, uint32 height);
-	void DestroyGraphcisDevice(GraphcisDevice* device);
+	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height);
+	void DestroyGraphicsDevice(GraphicsDevice* device);
 
-	class GraphcisDeviceContext {
+	class GraphicsList {
 	public:
-		DISABLE_LVALUE_COPY_AND_ASSIGN(GraphcisDeviceContext)
-		GraphcisDeviceContext(GraphcisDevice*device);
+
+		GraphicsList(GraphicsDevice* device = nullptr);
+		~GraphicsList();
+		GraphicsList(const GraphicsList& r);
+		GraphicsList(GraphicsList&& r) noexcept;
+		GraphicsList& operator=(const GraphicsList& r);
+		GraphicsList& operator=(GraphicsList&& r) noexcept;
+
+		void FinishCommandList();
 	private:
 		class impl;
 		impl* pimpl;
-	private:
 	};
-	GraphcisDeviceContext* CreateGraphcisDeviceContext(GraphcisDevice* device);
-	void DestroyGraphcisDeviceContext(GraphcisDeviceContext* context);
+
+	//GraphicsList *CreateGraphics
 }

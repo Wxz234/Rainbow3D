@@ -2,6 +2,6 @@
 
 namespace Rainbow3D {
 
-	GBuffer* CreateGBuffer(GraphcisDevice* device) { return nullptr; }
+	GBuffer* CreateGBuffer(GraphicsDevice* device) { return nullptr; }
 	void DestroyGBuffer(GBuffer* gbuffer) { delete gbuffer; }
 }

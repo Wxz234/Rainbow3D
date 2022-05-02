@@ -7,16 +7,16 @@ namespace Rainbow3D {
 	public:
 		DISABLE_COPY_AND_ASSIGN(MeshRenderer)
 
-		MeshRenderer(GraphcisDevice* device, Mesh* mesh);
+		MeshRenderer(GraphicsDevice* device, Mesh* mesh);
 		~MeshRenderer();
 	private:
-		GraphcisDevice* _device;
+		GraphicsDevice* _device;
 		Mesh* _mesh;
 
 		class impl;
 		impl* pimpl;
 	};
 
-	MeshRenderer* CreateMeshRenderer(GraphcisDevice* device, Mesh* mesh);
+	MeshRenderer* CreateMeshRenderer(GraphicsDevice* device, Mesh* mesh);
 	
 }

@@ -7,6 +7,6 @@ namespace Rainbow3D {
 		DISABLE_LVALUE_COPY_AND_ASSIGN(Texture)
 		Texture() {}
 	};
-	Texture* CreateTextureFromFile(GraphcisDevice* device, const wchar_t* file);
+	Texture* CreateTextureFromFile(GraphicsDevice* device, const wchar_t* file);
 	void DestroyTexture(Texture* texture);
 }

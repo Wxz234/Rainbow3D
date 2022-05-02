@@ -6,7 +6,7 @@ namespace Rainbow3D {
 	public:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertexBuffer;
 	};
-	MeshRenderer::MeshRenderer(GraphcisDevice* device, Mesh* mesh) {
+	MeshRenderer::MeshRenderer(GraphicsDevice* device, Mesh* mesh) {
 		_device = device; 
 		_mesh = mesh;
 		pimpl = new impl;
@@ -28,7 +28,7 @@ namespace Rainbow3D {
 		delete pimpl;
 	}
 
-	MeshRenderer* CreateMeshRenderer(GraphcisDevice* device, Mesh* mesh) {
+	MeshRenderer* CreateMeshRenderer(GraphicsDevice* device, Mesh* mesh) {
 		return new MeshRenderer(device, mesh);
 	}
 }
