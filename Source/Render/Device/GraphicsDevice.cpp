@@ -34,9 +34,30 @@ namespace Rainbow3D {
 			m_defferContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
 		}
 
-		virtual void SetRenderTarget(RenderTarget* rt) {
-			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
-			//m_defferContext->OMSetRenderTargets(1, dx11rt->m_rtv,)
+		virtual void SetRenderTarget(RenderTarget* rt, RenderTarget* dst) {
+			if (!rt && !dst) {
+				m_defferContext->OMSetRenderTargets(0, nullptr, nullptr);
+			}
+			else if (rt && !dst) {
+				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
+				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
+				m_defferContext->OMSetRenderTargets(1, plists, nullptr);
+			}
+			else if (!rt && dst) {
+				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
+				m_defferContext->OMSetRenderTargets(0, nullptr, dx11dst->m_dsv.Get());
+			}
+			else {
+				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
+				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
+				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
+				m_defferContext->OMSetRenderTargets(1, plists, dx11dst->m_dsv.Get());
+			}
+		}
+
+		void ClearDSV(RenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) {
+			auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dsv);
+			m_defferContext->ClearDepthStencilView(dx11dst->m_dsv.Get(), static_cast<uint32>(flags), depthValue, stencilValue);
 		}
 		void Close() {
 			m_defferContext->FinishCommandList(FALSE, &m_list);
@@ -122,8 +143,31 @@ namespace Rainbow3D {
 			m_DeviceContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
 		}
 
-		void SetRenderTarget(RenderTarget* rt) {
+		void  SetRenderTarget(RenderTarget* rt, RenderTarget* dst) {
+			if (!rt && !dst) {
+				m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+			}
+			else if(rt && !dst) {
+				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
+				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
+				m_DeviceContext->OMSetRenderTargets(1, plists, nullptr);
+			}
+			else if (!rt && dst) {
+				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
 
+				m_DeviceContext->OMSetRenderTargets(0, nullptr, dx11dst->m_dsv.Get());
+			}
+			else {
+				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
+				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
+				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
+				m_DeviceContext->OMSetRenderTargets(1, plists, dx11dst->m_dsv.Get());
+			}
+		}
+
+		void ClearDSV(RenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) {
+			auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dsv);
+			m_DeviceContext->ClearDepthStencilView(dx11dst->m_dsv.Get(), static_cast<uint32>(flags), depthValue, stencilValue);
 		}
 		virtual void ExecuteCommandList(GraphicsList* list) {
 			auto dx11list = reinterpret_cast<dx11GraphicsList*>(list);

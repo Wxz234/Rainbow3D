@@ -15,10 +15,17 @@ namespace Rainbow3D {
 	public:
 	};
 
+	enum class CLEAR_FLAGS {
+		DEPTH = 0x1,
+		STENCIL = 0x2
+	};
+
 	class GraphicsList : public GraphicsObject {
 	public:
 		virtual void ClearRTV(RenderTarget* rt, const float ColorRGBA[4]) = 0;
-		virtual void SetRenderTarget(RenderTarget* rt) = 0;
+		virtual void ClearDSV(RenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) = 0;
+		virtual void SetRenderTarget(RenderTarget* rt, RenderTarget* dst) = 0;
+
 		virtual void Close() = 0;
 	};
 
@@ -26,8 +33,9 @@ namespace Rainbow3D {
 	public:
 		virtual void Present() = 0;
 		virtual RenderTarget* GetSwapChainRenderTarget() = 0;
-		virtual void ClearRTV(RenderTarget* rt,const float ColorRGBA[4]) = 0;
-		virtual void SetRenderTarget(RenderTarget* rt) = 0;
+		virtual void ClearRTV(RenderTarget* rtv,const float ColorRGBA[4]) = 0;
+		virtual void ClearDSV(RenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) = 0;
+		virtual void SetRenderTarget(RenderTarget* rt, RenderTarget* dst) = 0;
 		virtual void ExecuteCommandList(GraphicsList* list) = 0;
 	};
 

@@ -3,12 +3,11 @@
 #include <d3d11.h>
 using namespace Rainbow3D;
 
-void Draw(GraphicsDevice* device, GraphicsList* list) {
-    auto rt = device->GetSwapChainRenderTarget();
-    float color[4] = { 0.3f,0.5f,0.0f,1.f };
-    list->ClearRTV(rt, color);
-    list->Close();
-    device->ExecuteCommandList(list);
+void Draw(GraphicsDevice* device, RenderTarget* rendertarget, RenderTarget* depthtarget) {
+    device->SetRenderTarget(rendertarget, depthtarget);
+    float color[4] = { 0,0,1,1 };
+    device->ClearRTV(rendertarget, color);
+    device->ClearDSV(depthtarget, CLEAR_FLAGS::DEPTH, 1.0f, 0);
     device->Present();
 }
 
@@ -18,7 +17,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto device = CreateGraphicsDevice(window->GetContext(), width, height);
     auto list = CreateGraphicsList(device);
     auto rendertarget = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
-    window->Run(Draw, device, list);
+    auto depthstenciltarget = CreateRenderTarget(device, width, height, FORMAT::D32_FLOAT);
+    window->Run(Draw, device, rendertarget, depthstenciltarget);
+    DestroyGraphicsObject(depthstenciltarget);
     DestroyGraphicsObject(rendertarget);
     DestroyGraphicsObject(list);
     DestroyGraphicsObject(device);
