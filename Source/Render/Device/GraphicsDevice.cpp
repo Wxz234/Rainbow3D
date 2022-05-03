@@ -22,6 +22,7 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_rt;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_srv;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
 	};
 
 
@@ -31,6 +32,11 @@ namespace Rainbow3D {
 		void ClearRTV(RenderTarget* rt, const float ColorRGBA[4]) {
 			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
 			m_defferContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
+		}
+
+		virtual void SetRenderTarget(RenderTarget* rt) {
+			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
+			//m_defferContext->OMSetRenderTargets(1, dx11rt->m_rtv,)
 		}
 		void Close() {
 			m_defferContext->FinishCommandList(FALSE, &m_list);
@@ -115,6 +121,10 @@ namespace Rainbow3D {
 			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(mrt);
 			m_DeviceContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
 		}
+
+		void SetRenderTarget(RenderTarget* rt) {
+
+		}
 		virtual void ExecuteCommandList(GraphicsList* list) {
 			auto dx11list = reinterpret_cast<dx11GraphicsList*>(list);
 			m_DeviceContext->ExecuteCommandList(dx11list->m_list.Get(), TRUE);
@@ -156,10 +166,10 @@ namespace Rainbow3D {
 		return dx11list;
 	}
 	DXGI_FORMAT getformat(FORMAT format) {
-		//if (format == FORMAT::RGBA8_UNORM) {
-		//	return DXGI_FORMAT_R8G8B8A8_UNORM;
-		//}
-		return DXGI_FORMAT_R8G8B8A8_UNORM;
+		if (format == FORMAT::RGBA8_UNORM) {
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+		}
+		return DXGI_FORMAT_D32_FLOAT;
 	}
 
 	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
@@ -174,25 +184,37 @@ namespace Rainbow3D {
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.CPUAccessFlags = 0;
 		desc.ArraySize = 1;
-		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		if (desc.Format == DXGI_FORMAT_D32_FLOAT) {
+			desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		}
+		else {
+			desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		}
 		desc.MiscFlags = 0;
 		desc.MipLevels = 1;
 		dx11device->m_Device->CreateTexture2D(&desc, nullptr, &dx11rt->m_rt);
-		//dx11device->m_Device->CreateTexture2D()
 
-		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
-		renderTargetViewDesc.Format = desc.Format;
-		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-		renderTargetViewDesc.Texture2D.MipSlice = 0;
+		if (desc.Format == DXGI_FORMAT_D32_FLOAT) {
+			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+			dsvDesc.Format = desc.Format;
+			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			dsvDesc.Texture2D.MipSlice = 0;
+			dx11device->m_Device->CreateDepthStencilView(dx11rt->m_rt.Get(), &dsvDesc, &dx11rt->m_dsv);
+		}
+		else {
+			D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
+			renderTargetViewDesc.Format = desc.Format;
+			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			renderTargetViewDesc.Texture2D.MipSlice = 0;
+			dx11device->m_Device->CreateRenderTargetView(dx11rt->m_rt.Get(), &renderTargetViewDesc, &dx11rt->m_rtv);
 
-		dx11device->m_Device->CreateRenderTargetView(dx11rt->m_rt.Get(), &renderTargetViewDesc, &dx11rt->m_rtv);
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = desc.Format;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MostDetailedMip = 0;
-		srvDesc.Texture2D.MipLevels = 1;
-		dx11device->m_Device->CreateShaderResourceView(dx11rt->m_rt.Get(), &srvDesc, &dx11rt->m_srv);
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.Format = desc.Format;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = 1;
+			dx11device->m_Device->CreateShaderResourceView(dx11rt->m_rt.Get(), &srvDesc, &dx11rt->m_srv);
+		}
 
 		return dx11rt;
 	}

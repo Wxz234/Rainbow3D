@@ -18,6 +18,7 @@ namespace Rainbow3D {
 	class GraphicsList : public GraphicsObject {
 	public:
 		virtual void ClearRTV(RenderTarget* rt, const float ColorRGBA[4]) = 0;
+		virtual void SetRenderTarget(RenderTarget* rt) = 0;
 		virtual void Close() = 0;
 	};
 
@@ -26,6 +27,7 @@ namespace Rainbow3D {
 		virtual void Present() = 0;
 		virtual RenderTarget* GetSwapChainRenderTarget() = 0;
 		virtual void ClearRTV(RenderTarget* rt,const float ColorRGBA[4]) = 0;
+		virtual void SetRenderTarget(RenderTarget* rt) = 0;
 		virtual void ExecuteCommandList(GraphicsList* list) = 0;
 	};
 
@@ -33,7 +35,8 @@ namespace Rainbow3D {
 	GraphicsList* CreateGraphicsList(GraphicsDevice* device);
 
 	enum class FORMAT {
-		RGBA8_UNORM
+		RGBA8_UNORM,
+		D32_FLOAT
 	};
 
 	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format);
