@@ -170,20 +170,20 @@ namespace Rainbow3D {
 			m_Context->PSSetShader(m_PixelShader.Get(), nullptr, 0);
 
 			CD3D11_SAMPLER_DESC sampler_Desc(D3D11_DEFAULT);
-			sampler_Desc.BorderColor[0] = 1.F;
-			sampler_Desc.BorderColor[1] = 0.F;
-			sampler_Desc.BorderColor[2] = 1.F;
-			sampler_Desc.BorderColor[3] = 1.F;
-			sampler_Desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-			sampler_Desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-			sampler_Desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+			//sampler_Desc.BorderColor[0] = 1.F;
+			//sampler_Desc.BorderColor[1] = 0.F;
+			//sampler_Desc.BorderColor[2] = 1.F;
+			//sampler_Desc.BorderColor[3] = 1.F;
+			//sampler_Desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+			//sampler_Desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+			//sampler_Desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
 			m_Device->CreateSamplerState(&sampler_Desc, &m_sampler);
 			m_Context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
 
 			float point[3][6] = { 
 				{ -1.f, -1.f, .1f, 1.f, 0.f, 0.f},
-				{ -1.f, 1.f,  .1f, 1.f, 0.f, 2.f},
-				{ 1.f, -1.f,  .1f, 1.f, 2.f, 0.f} 
+				{ -1.f, 3.f,  .1f, 1.f, 0.f, 2.f},
+				{ 3.f, -1.f,  .1f, 1.f, 2.f, 0.f} 
 			};
 			CD3D11_BUFFER_DESC buffer_Desc(72, D3D11_BIND_VERTEX_BUFFER);
 			D3D11_SUBRESOURCE_DATA InitData = {};
