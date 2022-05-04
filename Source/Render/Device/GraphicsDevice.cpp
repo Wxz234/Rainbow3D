@@ -1,10 +1,12 @@
 #include "Render/Device/GraphicsDevice.h"
+#include "Core/Math/Vector.h"
 #include <Windows.h>
 #include <d3d11_4.h>
 #include <dxgi1_2.h>
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 #include <string>
+#include <vector>
 namespace Rainbow3D {
 
 	class WindowContext {
@@ -13,9 +15,9 @@ namespace Rainbow3D {
 	};
 
 
-	class dx11RenderTarget : public RenderTarget {
+	class dx11RenderTarget : public GraphicsRenderTarget {
 	public:
-
+		void Release() { delete this; }
 		void* GetNativePointer() const noexcept {
 			return m_rtv.Get();
 		}
@@ -28,34 +30,46 @@ namespace Rainbow3D {
 
 	class dx11GraphicsList : public  GraphicsList {
 	public:
-
-		void ClearRTV(RenderTarget* rt, const float ColorRGBA[4]) {
+		void Release() { delete this; }
+		void ClearRTV(GraphicsRenderTarget* rt, const float ColorRGBA[4]) {
 			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
 			m_defferContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
 		}
 
-		virtual void SetRenderTarget(RenderTarget* rt, RenderTarget* dst) {
+		virtual void Open() {
+
+		}
+
+		virtual void SetRenderTarget(uint32 num, GraphicsRenderTarget* const* rt, GraphicsRenderTarget* dst) {
 			if (!rt && !dst) {
 				m_defferContext->OMSetRenderTargets(0, nullptr, nullptr);
 			}
 			else if (rt && !dst) {
-				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
-				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
-				m_defferContext->OMSetRenderTargets(1, plists, nullptr);
+
+				std::vector<ID3D11RenderTargetView*> list;
+				for (uint32 i = 0; i < num; ++i) {
+					dx11RenderTarget* dx11rt = reinterpret_cast<dx11RenderTarget*>(rt[i]);
+					list.push_back(dx11rt->m_rtv.Get());
+				}
+
+				m_defferContext->OMSetRenderTargets(num, list.data(), nullptr);
 			}
 			else if (!rt && dst) {
 				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
 				m_defferContext->OMSetRenderTargets(0, nullptr, dx11dst->m_dsv.Get());
 			}
 			else {
-				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
+				std::vector<ID3D11RenderTargetView*> list;
+				for (uint32 i = 0; i < num; ++i) {
+					dx11RenderTarget* dx11rt = reinterpret_cast<dx11RenderTarget*>(rt[i]);
+					list.push_back(dx11rt->m_rtv.Get());
+				}
 				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
-				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
-				m_defferContext->OMSetRenderTargets(1, plists, dx11dst->m_dsv.Get());
+				m_defferContext->OMSetRenderTargets(num, list.data(), dx11dst->m_dsv.Get());
 			}
 		}
 
-		void ClearDSV(RenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) {
+		void ClearDSV(GraphicsRenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) {
 			auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dsv);
 			m_defferContext->ClearDepthStencilView(dx11dst->m_dsv.Get(), static_cast<uint32>(flags), depthValue, stencilValue);
 		}
@@ -71,8 +85,9 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_defferContext;
 	};
 
-	class dx11GraphicsDevice :public GraphicsDevice {
+	class dx11GraphicsDevice : public GraphicsDevice {
 	public:
+		void Release() { delete this; }
 		dx11GraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
 
 			UINT createDeviceFlags = 0;
@@ -80,7 +95,7 @@ namespace Rainbow3D {
 			createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 			D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_11_1;
-			D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, &featureLevels, 1, D3D11_SDK_VERSION, m_Device.GetAddressOf(), nullptr, m_DeviceContext.GetAddressOf());
+			D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, &featureLevels, 1, D3D11_SDK_VERSION, m_Device.GetAddressOf(), nullptr, m_Context.GetAddressOf());
 
 			Microsoft::WRL::ComPtr<IDXGIDevice1> dxgiDevice;
 			m_Device.As(&dxgiDevice);
@@ -111,15 +126,33 @@ namespace Rainbow3D {
 
 			//D3DCompile()
 			std::string v_str = R"(
-				float4 main( float4 pos : POSITION ) : SV_POSITION
+				struct VSIN{
+					float4 pos : POSITION;
+					float2 uv : UV;
+				};
+				struct VSOUT{
+					float4 mypos : SV_POSITION;
+					float2 uv : PS_UV ;
+				};
+				VSOUT main( VSIN vs_in )
 				{
-					return pos;
+					VSOUT vs_out;
+					vs_out.mypos = vs_in.pos;
+					vs_out.uv = vs_in.uv;
+					return vs_out;
 				}
 			)";
 			std::string p_str = R"(
-				float4 main() : SV_TARGET
+				struct VSOUT{
+					float4 pos : SV_POSITION;
+					float2 uv : PS_UV;
+				};
+				Texture2D g_Tex : register(t0);
+				SamplerState g_Sampler : register(s0);
+				float4 main(VSOUT vs_in) : SV_TARGET
 				{
-					return float4(1.0f, 1.0f, 1.0f, 1.0f);
+					//g_Tex.Sample(g_Sampler, vs_in.Tex);
+					return g_Tex.Sample(g_Sampler, vs_in.uv);
 				}
 			)";
 
@@ -127,72 +160,81 @@ namespace Rainbow3D {
 			D3DCompile(p_str.c_str(), p_str.size(), nullptr, nullptr, nullptr, "main", "ps_5_0", 0, 0, &m_psblob, nullptr);
 			m_Device->CreateVertexShader(m_vsblob->GetBufferPointer(), m_vsblob->GetBufferSize(), nullptr, &m_VertexShader);
 			m_Device->CreatePixelShader(m_psblob->GetBufferPointer(), m_psblob->GetBufferSize(), nullptr, &m_PixelShader);
-			const D3D11_INPUT_ELEMENT_DESC inputLayout = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			m_Device->CreateInputLayout(&inputLayout, 1, m_vsblob->GetBufferPointer(), m_vsblob->GetBufferSize(), &m_pVertexLayout);
+			const D3D11_INPUT_ELEMENT_DESC inputLayout[2] = {
+				{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}, 
+				{ "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			};
+			m_Device->CreateInputLayout(inputLayout, 2, m_vsblob->GetBufferPointer(), m_vsblob->GetBufferSize(), &m_pVertexLayout);
+			
+			m_Context->VSSetShader(m_VertexShader.Get(), nullptr, 0);
+			m_Context->PSSetShader(m_PixelShader.Get(), nullptr, 0);
 
-			m_DeviceContext->VSSetShader(m_VertexShader.Get(), nullptr, 0);
-			m_DeviceContext->PSSetShader(m_PixelShader.Get(), nullptr, 0);
+			CD3D11_SAMPLER_DESC sampler_Desc(D3D11_DEFAULT);
+			sampler_Desc.BorderColor[0] = 1.F;
+			sampler_Desc.BorderColor[1] = 0.F;
+			sampler_Desc.BorderColor[2] = 1.F;
+			sampler_Desc.BorderColor[3] = 1.F;
+			sampler_Desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+			sampler_Desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+			sampler_Desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+			m_Device->CreateSamplerState(&sampler_Desc, &m_sampler);
+			m_Context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
+
+			float point[3][6] = { 
+				{ -1.f, -1.f, .1f, 1.f, 0.f, 0.f},
+				{ -1.f, 1.f,  .1f, 1.f, 0.f, 2.f},
+				{ 1.f, -1.f,  .1f, 1.f, 2.f, 0.f} 
+			};
+			CD3D11_BUFFER_DESC buffer_Desc(72, D3D11_BIND_VERTEX_BUFFER);
+			D3D11_SUBRESOURCE_DATA InitData = {};
+			InitData.pSysMem = point;
+			m_Device->CreateBuffer(&buffer_Desc, &InitData, m_VS_vertex_Buffers.GetAddressOf());
+
+			uint32 stride = 24;		
+			UINT offset = 0;						
+
+			m_Context->IASetVertexBuffers(0, 1, m_VS_vertex_Buffers.GetAddressOf(), &stride, &offset);
+			m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			m_Context->IASetInputLayout(m_pVertexLayout.Get());
+			CD3D11_VIEWPORT viewport(0.f, 0.f, width, height);
+			m_Context->RSSetViewports(1, &viewport);
 		}
 
-		void GraphicsDevice::Present() {
+		void Present() {
+			ID3D11RenderTargetView* plist[] = { rt.m_rtv.Get() };
+			m_Context->OMSetRenderTargets(1, plist, nullptr);
+			m_Context->Draw(3, 0);
 			m_swapChain->Present(1, 0);
 		}
 
-		virtual void ClearRTV(RenderTarget* mrt,const float ColorRGBA[4]) {
-			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(mrt);
-			m_DeviceContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
-		}
-
-		void  SetRenderTarget(RenderTarget* rt, RenderTarget* dst) {
-			if (!rt && !dst) {
-				m_DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-			}
-			else if(rt && !dst) {
-				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
-				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
-				m_DeviceContext->OMSetRenderTargets(1, plists, nullptr);
-			}
-			else if (!rt && dst) {
-				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
-
-				m_DeviceContext->OMSetRenderTargets(0, nullptr, dx11dst->m_dsv.Get());
-			}
-			else {
-				auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
-				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
-				ID3D11RenderTargetView* plists[] = { dx11rt->m_rtv.Get() };
-				m_DeviceContext->OMSetRenderTargets(1, plists, dx11dst->m_dsv.Get());
-			}
-		}
-
-		void ClearDSV(RenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) {
-			auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dsv);
-			m_DeviceContext->ClearDepthStencilView(dx11dst->m_dsv.Get(), static_cast<uint32>(flags), depthValue, stencilValue);
-		}
-		virtual void ExecuteCommandList(GraphicsList* list) {
+		void ExecuteCommandList(GraphicsList* list) {
 			auto dx11list = reinterpret_cast<dx11GraphicsList*>(list);
-			m_DeviceContext->ExecuteCommandList(dx11list->m_list.Get(), TRUE);
+			m_Context->ExecuteCommandList(dx11list->m_list.Get(), TRUE);
 		}
 
-		virtual RenderTarget* GetSwapChainRenderTarget() {
-			return &rt;
+		void BindRenderTarget(GraphicsRenderTarget* rendertarget) {
+			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rendertarget);
+			m_Context->PSSetShaderResources(0, 1, dx11rt->m_srv.GetAddressOf());
 		}
+
 
 		void* GetNativePointer() const noexcept {
 			return m_Device.Get();
 		}
 
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_DeviceContext;
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
-
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VertexShader;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
 		Microsoft::WRL::ComPtr<ID3DBlob> m_vsblob;
 		Microsoft::WRL::ComPtr<ID3DBlob> m_psblob;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pVertexLayout;
-
+		Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampler;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> m_VS_vertex_Buffers;
 		dx11RenderTarget rt;
+		//dx11ImmediateGraphicsList m_list;
+
 	};
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
@@ -216,7 +258,7 @@ namespace Rainbow3D {
 		return DXGI_FORMAT_D32_FLOAT;
 	}
 
-	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
+	GraphicsRenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
 		auto dx11rt = new dx11RenderTarget;
 		auto dx11device = reinterpret_cast<dx11GraphicsDevice*>(device);
 		D3D11_TEXTURE2D_DESC desc = {};

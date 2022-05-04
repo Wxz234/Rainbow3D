@@ -3,26 +3,31 @@
 #include <d3d11.h>
 using namespace Rainbow3D;
 
-void Draw(GraphicsDevice* device, RenderTarget* rendertarget, RenderTarget* depthtarget) {
-    device->SetRenderTarget(rendertarget, depthtarget);
-    float color[4] = { 0,0,1,1 };
-    device->ClearRTV(rendertarget, color);
-    device->ClearDSV(depthtarget, CLEAR_FLAGS::DEPTH, 1.0f, 0);
-    device->Present();
-}
-
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
     uint32 width = 800, height = 600;
     auto window = CreateRenderWindow(L"Rainbow3D", width, height);
     auto device = CreateGraphicsDevice(window->GetContext(), width, height);
-    auto list = CreateGraphicsList(device);
-    auto rendertarget = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
-    auto depthstenciltarget = CreateRenderTarget(device, width, height, FORMAT::D32_FLOAT);
-    window->Run(Draw, device, rendertarget, depthstenciltarget);
-    DestroyGraphicsObject(depthstenciltarget);
-    DestroyGraphicsObject(rendertarget);
-    DestroyGraphicsObject(list);
-    DestroyGraphicsObject(device);
-    DestroyRenderWindow(window);
+    auto omColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
+    device->BindRenderTarget(omColor);
+
+    auto baseColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
+    auto baseList = CreateGraphicsList(device);
+
+    window->Show();
+    while (window->IsActive()) {
+        window->Dispatch();
+        baseList->Open();
+        float outputColor[4] = { 1.f,0.2f,0.5f,1.f };
+        baseList->ClearRTV(omColor, outputColor);
+        baseList->Close();
+        device->ExecuteCommandList(baseList);
+        device->Present();
+    }
+
+    baseList->Release();
+    baseColor->Release();
+    omColor->Release();
+    device->Release();
+    window->Release();
     return 0;
 }
