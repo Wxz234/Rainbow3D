@@ -6,14 +6,12 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 #include <string>
-#include <vector>
 namespace Rainbow3D {
 
 	class WindowContext {
 	public:
 		HWND hwnd = NULL;
 	};
-
 
 	class dx11RenderTarget : public RenderTarget {
 	public:
