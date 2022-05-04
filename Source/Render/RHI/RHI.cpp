@@ -1,4 +1,4 @@
-#include "Render/Device/GraphicsDevice.h"
+#include "Render/RHI/RHI.h"
 #include "Core/Math/Vector.h"
 #include <Windows.h>
 #include <d3d11_4.h>
@@ -13,7 +13,6 @@ namespace Rainbow3D {
 	public:
 		HWND hwnd = NULL;
 	};
-
 
 	class dx11RenderTarget : public GraphicsRenderTarget {
 	public:

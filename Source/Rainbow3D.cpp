@@ -1,6 +1,7 @@
 #include "Rainbow3D.h"
 #include <Windows.h>
 #include <d3d11.h>
+#include <thread>
 using namespace Rainbow3D;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {

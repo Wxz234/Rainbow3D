@@ -14,7 +14,6 @@ namespace Rainbow3D {
 		D32_FLOAT
 	};
 
-
 	class GraphicsObject : public RainbowObject {
 	public:
 		virtual void* GetNativePointer() const noexcept = 0;
