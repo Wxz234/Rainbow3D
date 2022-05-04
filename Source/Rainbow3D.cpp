@@ -12,7 +12,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     device->BindRenderTarget(omColor);
 
     auto baseColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
-    auto baseList = CreateGraphicsList(device);
+    auto baseList = CreateCommandList(device);
 
     window->Show();
     while (window->IsActive()) {

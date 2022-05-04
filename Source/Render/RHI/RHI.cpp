@@ -14,7 +14,8 @@ namespace Rainbow3D {
 		HWND hwnd = NULL;
 	};
 
-	class dx11RenderTarget : public GraphicsRenderTarget {
+
+	class dx11RenderTarget : public RenderTarget {
 	public:
 		void Release() { delete this; }
 		void* GetNativePointer() const noexcept {
@@ -27,51 +28,20 @@ namespace Rainbow3D {
 	};
 
 
-	class dx11GraphicsList : public  GraphicsList {
+	class dx11GraphicsList : public  CommandList {
 	public:
 		void Release() { delete this; }
-		void ClearRTV(GraphicsRenderTarget* rt, const float ColorRGBA[4]) {
+		void ClearRTV(RenderTarget* rt, const float ColorRGBA[4]) {
 			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rt);
 			m_defferContext->ClearRenderTargetView(dx11rt->m_rtv.Get(), ColorRGBA);
 		}
 
-		virtual void Open() {
-
-		}
-
-		virtual void SetRenderTarget(uint32 num, GraphicsRenderTarget* const* rt, GraphicsRenderTarget* dst) {
-			if (!rt && !dst) {
-				m_defferContext->OMSetRenderTargets(0, nullptr, nullptr);
-			}
-			else if (rt && !dst) {
-
-				std::vector<ID3D11RenderTargetView*> list;
-				for (uint32 i = 0; i < num; ++i) {
-					dx11RenderTarget* dx11rt = reinterpret_cast<dx11RenderTarget*>(rt[i]);
-					list.push_back(dx11rt->m_rtv.Get());
-				}
-
-				m_defferContext->OMSetRenderTargets(num, list.data(), nullptr);
-			}
-			else if (!rt && dst) {
-				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
-				m_defferContext->OMSetRenderTargets(0, nullptr, dx11dst->m_dsv.Get());
-			}
-			else {
-				std::vector<ID3D11RenderTargetView*> list;
-				for (uint32 i = 0; i < num; ++i) {
-					dx11RenderTarget* dx11rt = reinterpret_cast<dx11RenderTarget*>(rt[i]);
-					list.push_back(dx11rt->m_rtv.Get());
-				}
-				auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dst);
-				m_defferContext->OMSetRenderTargets(num, list.data(), dx11dst->m_dsv.Get());
-			}
-		}
-
-		void ClearDSV(GraphicsRenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) {
+		void ClearDSV(RenderTarget* dsv, CLEAR_FLAGS flags, float depthValue, uint32 stencilValue) {
 			auto dx11dst = reinterpret_cast<dx11RenderTarget*>(dsv);
 			m_defferContext->ClearDepthStencilView(dx11dst->m_dsv.Get(), static_cast<uint32>(flags), depthValue, stencilValue);
 		}
+
+		void Open() {}
 		void Close() {
 			m_defferContext->FinishCommandList(FALSE, &m_list);
 		}
@@ -160,11 +130,11 @@ namespace Rainbow3D {
 			m_Device->CreateVertexShader(m_vsblob->GetBufferPointer(), m_vsblob->GetBufferSize(), nullptr, &m_VertexShader);
 			m_Device->CreatePixelShader(m_psblob->GetBufferPointer(), m_psblob->GetBufferSize(), nullptr, &m_PixelShader);
 			const D3D11_INPUT_ELEMENT_DESC inputLayout[2] = {
-				{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}, 
+				{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{ "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			};
 			m_Device->CreateInputLayout(inputLayout, 2, m_vsblob->GetBufferPointer(), m_vsblob->GetBufferSize(), &m_pVertexLayout);
-			
+
 			m_Context->VSSetShader(m_VertexShader.Get(), nullptr, 0);
 			m_Context->PSSetShader(m_PixelShader.Get(), nullptr, 0);
 
@@ -179,18 +149,18 @@ namespace Rainbow3D {
 			m_Device->CreateSamplerState(&sampler_Desc, &m_sampler);
 			m_Context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
 
-			float point[3][6] = { 
+			float point[3][6] = {
 				{ -1.f, -1.f, .1f, 1.f, 0.f, 0.f},
 				{ -1.f, 3.f,  .1f, 1.f, 0.f, 2.f},
-				{ 3.f, -1.f,  .1f, 1.f, 2.f, 0.f} 
+				{ 3.f, -1.f,  .1f, 1.f, 2.f, 0.f}
 			};
 			CD3D11_BUFFER_DESC buffer_Desc(72, D3D11_BIND_VERTEX_BUFFER);
 			D3D11_SUBRESOURCE_DATA InitData = {};
 			InitData.pSysMem = point;
 			m_Device->CreateBuffer(&buffer_Desc, &InitData, m_VS_vertex_Buffers.GetAddressOf());
 
-			uint32 stride = 24;		
-			UINT offset = 0;						
+			uint32 stride = 24;
+			UINT offset = 0;
 
 			m_Context->IASetVertexBuffers(0, 1, m_VS_vertex_Buffers.GetAddressOf(), &stride, &offset);
 			m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -206,12 +176,12 @@ namespace Rainbow3D {
 			m_swapChain->Present(1, 0);
 		}
 
-		void ExecuteCommandList(GraphicsList* list) {
+		void ExecuteCommandList(CommandList* list) {
 			auto dx11list = reinterpret_cast<dx11GraphicsList*>(list);
 			m_Context->ExecuteCommandList(dx11list->m_list.Get(), TRUE);
 		}
 
-		void BindRenderTarget(GraphicsRenderTarget* rendertarget) {
+		void BindRenderTarget(RenderTarget* rendertarget) {
 			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rendertarget);
 			m_Context->PSSetShaderResources(0, 1, dx11rt->m_srv.GetAddressOf());
 		}
@@ -232,8 +202,6 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampler;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_VS_vertex_Buffers;
 		dx11RenderTarget rt;
-		//dx11ImmediateGraphicsList m_list;
-
 	};
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
@@ -243,7 +211,7 @@ namespace Rainbow3D {
 		delete object;
 	}
 
-	GraphicsList* CreateGraphicsList(GraphicsDevice* device) {
+	CommandList* CreateCommandList(GraphicsDevice* device) {
 		auto dx11list = new dx11GraphicsList;
 		auto dx11device = reinterpret_cast<dx11GraphicsDevice*>(device);
 
@@ -257,7 +225,7 @@ namespace Rainbow3D {
 		return DXGI_FORMAT_D32_FLOAT;
 	}
 
-	GraphicsRenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
+	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
 		auto dx11rt = new dx11RenderTarget;
 		auto dx11device = reinterpret_cast<dx11GraphicsDevice*>(device);
 		D3D11_TEXTURE2D_DESC desc = {};
@@ -302,6 +270,10 @@ namespace Rainbow3D {
 		}
 
 		return dx11rt;
+	}
+
+	Texture2D* CreateTexture2DFromFile(GraphicsDevice* device, const wchar_t* filename) {
+		return nullptr;
 	}
 
 }
