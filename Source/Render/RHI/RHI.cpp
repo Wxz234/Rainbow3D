@@ -114,11 +114,11 @@ namespace Rainbow3D {
 			std::string v_str = R"(
 				struct VSIN{
 					float4 pos : POSITION;
-					float2 uv : UV;
+					float2 uv : TEXCOORD;
 				};
 				struct VSOUT{
 					float4 mypos : SV_POSITION;
-					float2 uv : PS_UV ;
+					float2 uv : TEXCOORD ;
 				};
 				VSOUT main( VSIN vs_in )
 				{
@@ -131,7 +131,7 @@ namespace Rainbow3D {
 			std::string p_str = R"(
 				struct VSOUT{
 					float4 pos : SV_POSITION;
-					float2 uv : PS_UV;
+					float2 uv : TEXCOORD;
 				};
 				Texture2D g_Tex : register(t0);
 				SamplerState g_Sampler : register(s0);
@@ -148,7 +148,7 @@ namespace Rainbow3D {
 			m_Device->CreatePixelShader(m_psblob->GetBufferPointer(), m_psblob->GetBufferSize(), nullptr, &m_PixelShader);
 			const D3D11_INPUT_ELEMENT_DESC inputLayout[2] = {
 				{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			};
 			m_Device->CreateInputLayout(inputLayout, 2, m_vsblob->GetBufferPointer(), m_vsblob->GetBufferSize(), &m_pVertexLayout);
 
