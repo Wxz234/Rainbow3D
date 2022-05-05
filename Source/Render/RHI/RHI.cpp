@@ -71,7 +71,7 @@ namespace Rainbow3D {
 	public:
 		void Release() { delete this; }
 		dx11GraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
-
+			hasBind = false;
 			UINT createDeviceFlags = 0;
 #ifdef _DEBUG 
 			createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -185,7 +185,9 @@ namespace Rainbow3D {
 		void Present() {
 			ID3D11RenderTargetView* plist[] = { rt.m_rtv.Get() };
 			m_Context->OMSetRenderTargets(1, plist, nullptr);
-			m_Context->Draw(3, 0);
+			if (hasBind) {
+				m_Context->Draw(3, 0);
+			}
 			m_swapChain->Present(1, 0);
 		}
 
@@ -195,6 +197,7 @@ namespace Rainbow3D {
 		}
 
 		void BindRenderTarget(RenderTarget* rendertarget) {
+			hasBind = true;
 			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rendertarget);
 			m_Context->PSSetShaderResources(0, 1, dx11rt->m_srv.GetAddressOf());
 		}
@@ -215,6 +218,7 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampler;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_VS_vertex_Buffers;
 		dx11RenderTarget rt;
+		bool hasBind;
 	};
 
 	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
