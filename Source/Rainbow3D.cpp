@@ -9,7 +9,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"Rainbow3D", width, height);
     auto device = CreateGraphicsDevice(window->GetContext(), width, height);
     auto omColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
-    device->BindRenderTarget(omColor);
 
     auto baseColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
     auto baseList = CreateCommandList(device);
@@ -22,7 +21,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         baseList->ClearRTV(omColor, outputColor);
         baseList->Close();
         device->ExecuteCommandList(baseList);
-        device->Present();
+        device->Present(omColor);
     }
 
     baseList->Release();
