@@ -1,5 +1,7 @@
 #include "Render/RHI/RHI.h"
 #include "Core/Math/Vector.h"
+#include "DDSTextureLoader11.h"
+#include "WICTextureLoader11.h"
 #include <Windows.h>
 #include <d3d11_4.h>
 #include <dxgi1_2.h>
@@ -13,18 +15,31 @@ namespace Rainbow3D {
 		HWND hwnd = NULL;
 	};
 
+	class dx11Texture2D : public Texture2D {
+	public:
+		void Release() { delete this; }
+		void* GetNativePointer() const noexcept {
+			return m_texture.Get();
+		}
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
+	};
+
 	class dx11RenderTarget : public RenderTarget {
 	public:
 		void Release() { delete this; }
 		void* GetNativePointer() const noexcept {
 			return m_rtv.Get();
 		}
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_rt;
+
+		Texture2D* GetTexture2D() {
+			return &m_tex;
+		}
+
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_srv;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
+		dx11Texture2D m_tex;
 	};
-
 
 	class dx11GraphicsList : public  CommandList {
 	public:
@@ -88,8 +103,8 @@ namespace Rainbow3D {
 
 			dxgiFactory->CreateSwapChainForHwnd(m_Device.Get(), context->hwnd, &_desc, &fsSwapChainDesc, nullptr, &m_swapChain);
 			dxgiFactory->MakeWindowAssociation(context->hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
-			m_swapChain->GetBuffer(0, IID_PPV_ARGS(&rt.m_rt));
-			m_Device->CreateRenderTargetView(rt.m_rt.Get(), NULL, &rt.m_rtv);
+			m_swapChain->GetBuffer(0, IID_PPV_ARGS(&rt.m_tex.m_texture));
+			m_Device->CreateRenderTargetView(rt.m_tex.m_texture.Get(), NULL, &rt.m_rtv);
 
 			//D3DCompile()
 			std::string v_str = R"(
@@ -243,28 +258,28 @@ namespace Rainbow3D {
 		}
 		desc.MiscFlags = 0;
 		desc.MipLevels = 1;
-		dx11device->m_Device->CreateTexture2D(&desc, nullptr, &dx11rt->m_rt);
+		dx11device->m_Device->CreateTexture2D(&desc, nullptr, &dx11rt->m_tex.m_texture);
 
 		if (desc.Format == DXGI_FORMAT_D32_FLOAT) {
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 			dsvDesc.Format = desc.Format;
 			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 			dsvDesc.Texture2D.MipSlice = 0;
-			dx11device->m_Device->CreateDepthStencilView(dx11rt->m_rt.Get(), &dsvDesc, &dx11rt->m_dsv);
+			dx11device->m_Device->CreateDepthStencilView(dx11rt->m_tex.m_texture.Get(), &dsvDesc, &dx11rt->m_dsv);
 		}
 		else {
 			D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
 			renderTargetViewDesc.Format = desc.Format;
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
-			dx11device->m_Device->CreateRenderTargetView(dx11rt->m_rt.Get(), &renderTargetViewDesc, &dx11rt->m_rtv);
+			dx11device->m_Device->CreateRenderTargetView(dx11rt->m_tex.m_texture.Get(), &renderTargetViewDesc, &dx11rt->m_rtv);
 
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 			srvDesc.Format = desc.Format;
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			srvDesc.Texture2D.MostDetailedMip = 0;
 			srvDesc.Texture2D.MipLevels = 1;
-			dx11device->m_Device->CreateShaderResourceView(dx11rt->m_rt.Get(), &srvDesc, &dx11rt->m_srv);
+			dx11device->m_Device->CreateShaderResourceView(dx11rt->m_tex.m_texture.Get(), &srvDesc, &dx11rt->m_srv);
 		}
 
 		return dx11rt;

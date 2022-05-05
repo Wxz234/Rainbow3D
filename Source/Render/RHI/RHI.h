@@ -25,6 +25,7 @@ namespace Rainbow3D {
 
 	class RenderTarget : public GraphicsObject {
 	public:
+		virtual Texture2D* GetTexture2D() = 0;
 	};
 
 	class CommandList : public GraphicsObject {
