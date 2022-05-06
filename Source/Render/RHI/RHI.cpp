@@ -18,16 +18,12 @@ namespace Rainbow3D {
 	class dx11Texture2D : public Texture2D {
 	public:
 		void Release() { delete this; }
-		void* GetNativePointer() const noexcept {
-			return m_texture.Get();
-		}
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 	};
 
 	class dx11RenderTarget : public RenderTarget {
 	public:
 		void Release() { delete this; }
-		void* GetNativePointer() const noexcept { return nullptr; }
 		Texture2D* GetTexture2D() { return &m_tex; }
 
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
@@ -38,7 +34,6 @@ namespace Rainbow3D {
 	class dx11DepthStencilTarget : public DepthStencilTarget {
 	public:
 		void Release() { delete this; }
-		void* GetNativePointer() const noexcept { return nullptr; }
 		Texture2D* GetTexture2D() { return &m_tex; }
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
 		dx11Texture2D m_tex;
@@ -60,10 +55,6 @@ namespace Rainbow3D {
 		void Open() {}
 		void Close() {
 			m_defferContext->FinishCommandList(FALSE, &m_list);
-		}
-
-		void* GetNativePointer() const noexcept {
-			return m_list.Get();
 		}
 
 		Microsoft::WRL::ComPtr<ID3D11CommandList> m_list;
@@ -202,11 +193,6 @@ namespace Rainbow3D {
 		void ExecuteCommandList(CommandList* list) {
 			auto dx11list = reinterpret_cast<dx11GraphicsList*>(list);
 			m_Context->ExecuteCommandList(dx11list->m_list.Get(), TRUE);
-		}
-
-
-		void* GetNativePointer() const noexcept {
-			return m_Device.Get();
 		}
 
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
