@@ -347,18 +347,23 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
 		HRESULT hr;
+		static HRESULT hr_once;
 		static std::once_flag flag_once;
-		std::call_once(flag_once, []() { CoInitialize(nullptr); });
+		std::call_once(flag_once, []() {  hr_once = CoInitialize(nullptr); });
+
 		if (isDDS(file)) {
 			hr = DirectX::CreateDDSTextureFromFile(dx11device->m_Device.Get(), file.c_str(), &resource, &srv);
 		}
 		else {
 			hr = DirectX::CreateWICTextureFromFile(dx11device->m_Device.Get(), file.c_str(), &resource, &srv);
 		}
-
+		if (FAILED(hr) || FAILED(hr_once)) {
+			Rainbow3D_Error("HR");
+			return nullptr;
+		}
 		D3D11_RESOURCE_DIMENSION pResourceDimension = {};
 		resource->GetType(&pResourceDimension);
-		if (SUCCEEDED(hr) && pResourceDimension == D3D11_RESOURCE_DIMENSION_TEXTURE2D) {
+		if (pResourceDimension == D3D11_RESOURCE_DIMENSION_TEXTURE2D) {
 			auto temp = new dx11Texture2D;
 			temp->m_srv = srv;
 			resource.As(&temp->m_texture);
