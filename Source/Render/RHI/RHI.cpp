@@ -1,13 +1,16 @@
+#include "Core/Log/Log.h"
 #include "Render/RHI/RHI.h"
 #include "Core/Math/Vector.h"
 #include "DDSTextureLoader11.h"
 #include "WICTextureLoader11.h"
 #include <Windows.h>
+#include <winerror.h>
 #include <d3d11_4.h>
 #include <dxgi1_2.h>
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 #include <string>
+
 namespace Rainbow3D {
 
 	class WindowContext {
@@ -18,16 +21,20 @@ namespace Rainbow3D {
 	class dx11Texture2D : public Texture2D {
 	public:
 		void Release() { delete this; }
+
+		FORMAT GetFormat() const noexcept {
+			return m_format;
+		}
+		FORMAT m_format = FORMAT::RGBA8_UNORM;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_srv;
 	};
 
 	class dx11RenderTarget : public RenderTarget {
 	public:
 		void Release() { delete this; }
 		Texture2D* GetTexture2D() { return &m_tex; }
-
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_srv;
 		dx11Texture2D m_tex;
 	};
 
@@ -181,13 +188,12 @@ namespace Rainbow3D {
 			auto dx11rt = reinterpret_cast<dx11RenderTarget*>(rendertarget);
 			if (temp_present_rt != dx11rt) {
 				temp_present_rt = dx11rt;
-				m_Context->PSSetShaderResources(0, 1, dx11rt->m_srv.GetAddressOf());
+				m_Context->PSSetShaderResources(0, 1, dx11rt->m_tex.m_srv.GetAddressOf());
 			}
 			ID3D11RenderTargetView* plist[] = { rt.m_rtv.Get() };
 			m_Context->OMSetRenderTargets(1, plist, nullptr);
 			m_Context->Draw(3, 0);
 			m_swapChain->Present(1, 0);
-
 		}
 
 		void ExecuteCommandList(CommandList* list) {
@@ -229,6 +235,7 @@ namespace Rainbow3D {
 
 	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
 		auto dx11rt = new dx11RenderTarget;
+		dx11rt->m_tex.m_format = format;
 		auto dx11device = reinterpret_cast<dx11GraphicsDevice*>(device);
 		D3D11_TEXTURE2D_DESC desc = {};
 		desc.Width = width;
@@ -255,13 +262,14 @@ namespace Rainbow3D {
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
-		dx11device->m_Device->CreateShaderResourceView(dx11rt->m_tex.m_texture.Get(), &srvDesc, &dx11rt->m_srv);
+		dx11device->m_Device->CreateShaderResourceView(dx11rt->m_tex.m_texture.Get(), &srvDesc, &dx11rt->m_tex.m_srv);
 		
 		return dx11rt;
 	}
 
 	DepthStencilTarget* CreateDepthStencilTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
 		auto dx11dst = new dx11DepthStencilTarget;
+		dx11dst->m_tex.m_format = format;
 		auto dx11device = reinterpret_cast<dx11GraphicsDevice*>(device);
 		D3D11_TEXTURE2D_DESC desc = {};
 		desc.Width = width;
@@ -272,7 +280,7 @@ namespace Rainbow3D {
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.CPUAccessFlags = 0;
 		desc.ArraySize = 1;
-		desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 		desc.MiscFlags = 0;
 		desc.MipLevels = 1;
 		dx11device->m_Device->CreateTexture2D(&desc, nullptr, &dx11dst->m_tex.m_texture);
@@ -283,13 +291,65 @@ namespace Rainbow3D {
 		dsvDesc.Texture2D.MipSlice = 0;
 		dx11device->m_Device->CreateDepthStencilView(dx11dst->m_tex.m_texture.Get(), &dsvDesc, &dx11dst->m_dsv);
 
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = desc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = 1;
+		dx11device->m_Device->CreateShaderResourceView(dx11dst->m_tex.m_texture.Get(), &srvDesc, &dx11dst->m_tex.m_srv);
+
 		return dx11dst;
+	}
+
+	bool isDDS(const std::wstring &str) {
+		if (str.size() < 4) {
+			return false;
+		}
+		auto r_iter = str.rbegin();
+		if (*r_iter == L's' || *r_iter == L'S') {
+			++r_iter;
+		}
+		else{
+			return false;
+		}
+		if (*r_iter == L'd' || *r_iter == L'D') {
+			++r_iter;
+		}
+		else {
+			return false;
+		}
+		if (*r_iter == L'd' || *r_iter == L'D') {
+			++r_iter;
+		}
+		else {
+			return false;
+		}
+		if (*r_iter == L'.') {
+			return true;
+		}
+	
+		return false;
 	}
 
 	Texture2D* CreateTexture2DFromFile(GraphicsDevice* device, const wchar_t* filename) {
 		std::wstring file = filename;
-		if (file.ends_with(L".dds")) {
-
+		auto dx11device = reinterpret_cast<dx11GraphicsDevice*>(device);
+		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+		HRESULT hr;
+		if (isDDS(file)) {
+			hr = DirectX::CreateDDSTextureFromFile(dx11device->m_Device.Get(), file.c_str(), &resource, &srv);
+		}
+		else {
+			hr = DirectX::CreateWICTextureFromFile(dx11device->m_Device.Get(), file.c_str(), &resource, &srv);
+		}
+		D3D11_RESOURCE_DIMENSION pResourceDimension = {};
+		resource->GetType(&pResourceDimension);
+		if (SUCCEEDED(hr) && pResourceDimension == D3D11_RESOURCE_DIMENSION_TEXTURE2D) {
+			auto temp = new dx11Texture2D;
+			temp->m_srv = srv;
+			resource.As(&temp->m_texture);
+			return temp;
 		}
 		return nullptr;
 	}

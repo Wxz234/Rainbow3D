@@ -16,6 +16,7 @@ namespace Rainbow3D {
 
 	class Texture2D : public RainbowObject {
 	public:
+		virtual FORMAT GetFormat() const noexcept = 0;
 	};
 
 	class RenderTarget : public RainbowObject {
