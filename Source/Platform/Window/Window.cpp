@@ -1,11 +1,7 @@
 #include "Platform/Window/Window.h"
+#include "Platform/Window/WindowContext.h"
 #include <Windows.h>
 namespace Rainbow3D {
-
-	class WindowContext {
-	public:
-		HWND hwnd = NULL;
-	};
 
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{

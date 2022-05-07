@@ -1,8 +1,10 @@
 #include "Core/Log/Log.h"
-#include "Render/RHI/RHI.h"
 #include "Core/Math/Vector.h"
-#include "DDSTextureLoader11.h"
-#include "WICTextureLoader11.h"
+#include "Render/RHI/RHI.h"
+#include "Render/RHI/DDSTextureLoader11.h"
+#include "Render/RHI/WICTextureLoader11.h"
+#include "Platform/Window/WindowContext.h"
+
 #include <Windows.h>
 #include <winerror.h>
 #include <d3d11_4.h>
@@ -10,13 +12,16 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 #include <string>
+#include <mutex>
 
 namespace Rainbow3D {
 
-	class WindowContext {
-	public:
-		HWND hwnd = NULL;
-	};
+	DXGI_FORMAT getformat(FORMAT format) {
+		if (format == FORMAT::RGBA8_UNORM) {
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+		}
+		return DXGI_FORMAT_D32_FLOAT;
+	}
 
 	class dx11Texture2D : public Texture2D {
 	public:
@@ -165,9 +170,9 @@ namespace Rainbow3D {
 			m_Context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
 
 			float point[3][6] = {
-				{ -1.f, -1.f, .1f, 1.f, 0.f, 0.f},
-				{ -1.f, 3.f,  .1f, 1.f, 0.f, 2.f},
-				{ 3.f, -1.f,  .1f, 1.f, 2.f, 0.f}
+				{ -1.f, -1.f, .1f, 1.f, 0.f, 1.f},
+				{ -1.f, 3.f,  .1f, 1.f, 0.f,-1.f},
+				{ 3.f, -1.f,  .1f, 1.f, 2.f, 1.f}
 			};
 			CD3D11_BUFFER_DESC buffer_Desc(72, D3D11_BIND_VERTEX_BUFFER);
 			D3D11_SUBRESOURCE_DATA InitData = {};
@@ -190,6 +195,17 @@ namespace Rainbow3D {
 				temp_present_rt = dx11rt;
 				m_Context->PSSetShaderResources(0, 1, dx11rt->m_tex.m_srv.GetAddressOf());
 			}
+			ID3D11RenderTargetView* plist[] = { rt.m_rtv.Get() };
+			m_Context->OMSetRenderTargets(1, plist, nullptr);
+			m_Context->Draw(3, 0);
+			m_swapChain->Present(1, 0);
+		}
+
+		void Present(Texture2D* texture) {
+			auto dx11texture = reinterpret_cast<dx11Texture2D*>(texture);
+
+			m_Context->PSSetShaderResources(0, 1, dx11texture->m_srv.GetAddressOf());
+			
 			ID3D11RenderTargetView* plist[] = { rt.m_rtv.Get() };
 			m_Context->OMSetRenderTargets(1, plist, nullptr);
 			m_Context->Draw(3, 0);
@@ -225,12 +241,6 @@ namespace Rainbow3D {
 
 		dx11device->m_Device->CreateDeferredContext(0, &dx11list->m_defferContext);
 		return dx11list;
-	}
-	DXGI_FORMAT getformat(FORMAT format) {
-		if (format == FORMAT::RGBA8_UNORM) {
-			return DXGI_FORMAT_R8G8B8A8_UNORM;
-		}
-		return DXGI_FORMAT_D32_FLOAT;
 	}
 
 	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format) {
@@ -337,12 +347,15 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
 		HRESULT hr;
+		static std::once_flag flag_once;
+		std::call_once(flag_once, []() { CoInitialize(nullptr); });
 		if (isDDS(file)) {
 			hr = DirectX::CreateDDSTextureFromFile(dx11device->m_Device.Get(), file.c_str(), &resource, &srv);
 		}
 		else {
 			hr = DirectX::CreateWICTextureFromFile(dx11device->m_Device.Get(), file.c_str(), &resource, &srv);
 		}
+
 		D3D11_RESOURCE_DIMENSION pResourceDimension = {};
 		resource->GetType(&pResourceDimension);
 		if (SUCCEEDED(hr) && pResourceDimension == D3D11_RESOURCE_DIMENSION_TEXTURE2D) {

@@ -6,6 +6,7 @@ add_executable(Rainbow3D WIN32
 	"Render/RHI/RHI.cpp"
 	"Render/RHI/DDSTextureLoader11.cpp"
 	"Render/RHI/WICTextureLoader11.cpp"
+	"Render/GBuffer/GBuffer.cpp"
 )
 
 target_compile_definitions(Rainbow3D PRIVATE UNICODE)

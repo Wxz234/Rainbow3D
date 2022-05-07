@@ -40,6 +40,7 @@ namespace Rainbow3D {
 	class GraphicsDevice : public RainbowObject {
 	public:
 		virtual void Present(RenderTarget* rt) = 0;
+		virtual void Present(Texture2D* texture) = 0;
 		virtual void ExecuteCommandList(CommandList* list) = 0;
 	};
 

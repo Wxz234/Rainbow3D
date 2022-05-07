@@ -11,19 +11,17 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     auto baseColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
     auto baseList = CreateCommandList(device);
+    auto texture = CreateTexture2DFromFile(device, L"C:\\Users\\WangYuzhi\\Desktop\\R-C.jpg");
 
     window->Show();
     while (window->IsActive()) {
-        auto _omColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
-
         window->Dispatch();
         baseList->Open();
         float outputColor[4] = { 1.f,0.2f,0.5f,1.f };
         baseList->ClearRTV(omColor, outputColor);
         baseList->Close();
         device->ExecuteCommandList(baseList);
-        device->Present(omColor);
-        DestroyRainbowObject(_omColor);
+        device->Present(texture);
     }
 
     DestroyRainbowObject(baseList);
