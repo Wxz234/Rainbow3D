@@ -15,4 +15,6 @@ namespace Rainbow3D {
 	public:
 		virtual void Release() = 0;
 	};
+
+	inline void DestroyRainbowObject(RainbowObject* obj) { obj->Release(); }
 }

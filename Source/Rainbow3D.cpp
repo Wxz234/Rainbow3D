@@ -14,6 +14,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     window->Show();
     while (window->IsActive()) {
+        auto _omColor = CreateRenderTarget(device, width, height, FORMAT::RGBA8_UNORM);
+
         window->Dispatch();
         baseList->Open();
         float outputColor[4] = { 1.f,0.2f,0.5f,1.f };
@@ -21,12 +23,14 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         baseList->Close();
         device->ExecuteCommandList(baseList);
         device->Present(omColor);
+        DestroyRainbowObject(_omColor);
     }
 
-    baseList->Release();
-    baseColor->Release();
-    omColor->Release();
-    device->Release();
-    window->Release();
+    DestroyRainbowObject(baseList);
+    DestroyRainbowObject(baseColor);
+    DestroyRainbowObject(omColor);
+    DestroyRainbowObject(device);
+    DestroyRainbowObject(window);
+
     return 0;
 }

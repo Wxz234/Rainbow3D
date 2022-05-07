@@ -5,3 +5,4 @@
 #include "Core/Math/Vector.h"
 #include "Platform/Window/Window.h"
 #include "Render/RHI/RHI.h"
+#include "Render/GBuffer/GBuffer.h"
