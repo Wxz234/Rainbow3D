@@ -21,7 +21,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         Rainbow3D_Warning("Delete sssssadas");
     };
 
-    UniquePointer<int> up6d(new int); // D is copied
+    UniquePtr<int> up6d(new int); // D is copied
 
 
     window->Show();

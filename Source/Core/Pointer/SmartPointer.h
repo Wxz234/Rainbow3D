@@ -13,35 +13,35 @@ namespace Rainbow3D {
 	concept IsArray = std::is_array_v<T>;
 
 	template <typename T, typename Deleter = std::default_delete<T>>
-	class UniquePointer {
+	class UniquePtr {
 	public:
-		UniquePointer() = default;
-		UniquePointer(std::nullptr_t) {}
-		UniquePointer(const UniquePointer&) = delete;
+		UniquePtr() = default;
+		UniquePtr(std::nullptr_t) {}
+		UniquePtr(const UniquePtr&) = delete;
 
 		template <typename U>
 		requires IsConvertible<U*, T*>
-		explicit UniquePointer(U* InPtr) : _ptr(InPtr) {}
+		explicit UniquePtr(U* InPtr) : _ptr(InPtr) {}
 
 		template <typename U>
 		requires IsConvertible<U*, T*>
-		explicit UniquePointer(U* InPtr, Deleter&& InDeleter) : _ptr(InPtr, std::move(InDeleter)) {}
+		explicit UniquePtr(U* InPtr, Deleter&& InDeleter) : _ptr(InPtr, std::move(InDeleter)) {}
 
 		template <typename U>
 		requires IsConvertible<U*, T*>
-		explicit UniquePointer(U* InPtr, const Deleter& InDeleter) : _ptr(InPtr, InDeleter) {}
+		explicit UniquePtr(U* InPtr, const Deleter& InDeleter) : _ptr(InPtr, InDeleter) {}
 
-		UniquePointer(UniquePointer&& Other) : _ptr(std::move(Other._ptr)) {}
+		UniquePtr(UniquePtr&& Other) : _ptr(std::move(Other._ptr)) {}
 
 		template <typename OtherT, typename OtherDeleter>
 		requires !IsArray<OtherT> && IsConvertible<OtherT*, T*>
-		UniquePointer(UniquePointer<OtherT, OtherDeleter>&& Other) {
+		UniquePtr(UniquePtr<OtherT, OtherDeleter>&& Other) {
 			_ptr = std::move(Other._ptr);
 		}
 
-		UniquePointer& operator=(const UniquePointer&) = delete;
+		UniquePtr& operator=(const UniquePtr&) = delete;
 
-		UniquePointer& operator=(UniquePointer&& Other)
+		UniquePtr& operator=(UniquePtr&& Other)
 		{
 			if (this != std::addressof(Other))
 			{
@@ -52,19 +52,19 @@ namespace Rainbow3D {
 
 		template <typename OtherT, typename OtherDeleter>
 		requires !IsArray<OtherT>&& IsConvertible<OtherT*, T*>
-		UniquePointer& operator=(UniquePointer<OtherT, OtherDeleter>&& Other)
+		UniquePtr& operator=(UniquePtr<OtherT, OtherDeleter>&& Other)
 		{
 			_ptr = std::move(Other._ptr);
 			return *this;
 		}
 
-		UniquePointer& operator=(std::nullptr_t)
+		UniquePtr& operator=(std::nullptr_t)
 		{
 			Reset();
 			return *this;
 		}
 
-		~UniquePointer() {}
+		~UniquePtr() {}
 
 		bool IsValid() const
 		{
@@ -111,6 +111,16 @@ namespace Rainbow3D {
 
 	private:
 		std::unique_ptr<T, Deleter> _ptr;
+	};
+
+	template <typename ObjectType>
+	class SharedPtr {
+	public:
+		SharedPtr() = default;
+		SharedPtr(std::nullptr_t) {}
+
+	private:
+		std::shared_ptr<ObjectType> _ptr;
 	};
 
 }
