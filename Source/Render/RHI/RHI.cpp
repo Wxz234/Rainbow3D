@@ -16,11 +16,24 @@
 
 namespace Rainbow3D {
 
-	DXGI_FORMAT getformat(FORMAT format) {
-		if (format == FORMAT::RGBA8_UNORM) {
+	DXGI_FORMAT getdxgiformat(FORMAT format) {
+		if (format == FORMAT::UNKNOWN) {
+			return DXGI_FORMAT_UNKNOWN;
+		}
+		else if(format == FORMAT::RGBA8_UNORM) {
 			return DXGI_FORMAT_R8G8B8A8_UNORM;
 		}
 		return DXGI_FORMAT_D32_FLOAT;
+	}
+
+	FORMAT getformat(DXGI_FORMAT format) {
+		if (format == DXGI_FORMAT_R8G8B8A8_UNORM) {
+			return FORMAT::RGBA8_UNORM;
+		}
+		else if (format == DXGI_FORMAT_D32_FLOAT) {
+			return FORMAT::D32_FLOAT;
+		}
+		return FORMAT::UNKNOWN;
 	}
 
 	class dx11Texture2D : public Texture2D {
@@ -30,7 +43,7 @@ namespace Rainbow3D {
 		FORMAT GetFormat() const noexcept {
 			return m_format;
 		}
-		FORMAT m_format = FORMAT::RGBA8_UNORM;
+		FORMAT m_format = FORMAT::UNKNOWN;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_srv;
 	};
@@ -250,7 +263,7 @@ namespace Rainbow3D {
 		D3D11_TEXTURE2D_DESC desc = {};
 		desc.Width = width;
 		desc.Height = height;
-		desc.Format = getformat(format);
+		desc.Format = getdxgiformat(format);
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;
@@ -284,7 +297,7 @@ namespace Rainbow3D {
 		D3D11_TEXTURE2D_DESC desc = {};
 		desc.Width = width;
 		desc.Height = height;
-		desc.Format = getformat(format);
+		desc.Format = getdxgiformat(format);
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;
@@ -343,6 +356,7 @@ namespace Rainbow3D {
 
 	Texture2D* CreateTexture2DFromFile(GraphicsDevice* device, const wchar_t* filename) {
 		std::wstring file = filename;
+		auto temp = new dx11Texture2D;
 		auto dx11device = reinterpret_cast<dx11GraphicsDevice*>(device);
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
@@ -364,12 +378,14 @@ namespace Rainbow3D {
 		D3D11_RESOURCE_DIMENSION pResourceDimension = {};
 		resource->GetType(&pResourceDimension);
 		if (pResourceDimension == D3D11_RESOURCE_DIMENSION_TEXTURE2D) {
-			auto temp = new dx11Texture2D;
 			temp->m_srv = srv;
 			resource.As(&temp->m_texture);
+			D3D11_TEXTURE2D_DESC desc = {};
+			temp->m_texture->GetDesc(&desc);
+			temp->m_format = getformat(desc.Format);
 			return temp;
 		}
-		return nullptr;
+		return temp;
 	}
 
 }

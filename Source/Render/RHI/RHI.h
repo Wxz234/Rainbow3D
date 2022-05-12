@@ -10,6 +10,7 @@ namespace Rainbow3D {
 	};
 
 	enum class FORMAT {
+		UNKNOWN,
 		RGBA8_UNORM,
 		D32_FLOAT
 	};
