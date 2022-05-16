@@ -14,6 +14,12 @@
 #include <string>
 #include <mutex>
 
+#include <boost/shared_ptr.hpp>
+
+void p() {
+	boost::shared_ptr<int> x;
+}
+
 namespace Rainbow3D {
 
 	DXGI_FORMAT getdxgiformat(FORMAT format) {
