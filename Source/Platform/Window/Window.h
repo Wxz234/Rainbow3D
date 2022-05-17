@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/CoreTypes.h"
 #include "Core/CoreDef.h"
+#include "Core/Pointer/SmartPointer.h"
 
 namespace Rainbow3D {
 

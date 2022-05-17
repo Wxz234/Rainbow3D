@@ -23,6 +23,7 @@ public:
         _outputA("this is B.");
     }
 };
+void fff(A* p) { }
 
 namespace test {
     template <class _Ty>
@@ -40,7 +41,7 @@ namespace test {
     };
 }
 
-void fff(int* p) { delete p; }
+
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -60,13 +61,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto pp = std::is_convertible_v<A,B>;
     {
         std::unique_ptr<B, test::default_delete<B>> y(new B);
-        std::unique_ptr<A, test::default_delete<A>> x(std::move(y));
-        x.~unique_ptr();
-
-        auto psda = x.get();
-
-
-        UniquePtr<A> xx(new B);
+        std::unique_ptr<int[]>(new int[3]);
        //std::is_
         UniquePtr<A> zz(UniquePtr<B>(new B));
     }
