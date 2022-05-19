@@ -1,250 +1,96 @@
 #pragma once
-#include <cstddef>
+#include "Core/CoreTemplate.h"
+#include <memory>
 #include <type_traits>
+#include <cstddef>
+#include <utility>
+
 namespace Rainbow3D {
-
-	template<typename T> 
+	template<typename T, typename D = std::default_delete<T>>
 	class UniquePtr {
+		using D_noref = std::remove_reference_t<D>;
 	public:
-		UniquePtr() noexcept
-		{
-			ptr = nullptr;
-		}
-
-		UniquePtr(nullptr_t) noexcept
-		{
-			ptr = nullptr;
-		}
+		using deleter_type = D;
+		using element_type = T;
+		using pointer = typename _Get_deleter_pointer_type<T, D_noref>::type;
 
 		UniquePtr(const UniquePtr&) = delete;
 
-		template <typename U>
-		requires std::is_convertible_v<U*, T*>
-		explicit UniquePtr(U* InPtr)
-			: ptr(InPtr)
-		{
-		}
+		template <typename = void>
+		requires std::negation_v<std::is_pointer<D>> && std::is_default_constructible_v<D>
+		constexpr UniquePtr() noexcept : _ptr(nullptr) , _d() {}
 
-		UniquePtr(UniquePtr&& Other) noexcept
-		{
-			ptr = Other.ptr;
-			Other.ptr = nullptr;
-		}
+		template <typename = void>
+		requires std::negation_v<std::is_pointer<D>> && std::is_default_constructible_v<D>
+		constexpr UniquePtr(std::nullptr_t) noexcept : _ptr(nullptr), _d() {  }
 
-		template <typename OtherT>
-		requires std::negation_v<std::is_array<OtherT>> && std::is_convertible_v<OtherT*, T*>
-		UniquePtr(UniquePtr<OtherT>&& Other) noexcept
-		{
-			ptr = Other.Release();
-		}
+		//disable CTAD
+		template <typename = void>
+		requires std::negation_v<std::is_pointer<D>> && std::is_default_constructible_v<D>
+		explicit  UniquePtr(pointer p) noexcept : _ptr(p), _d() {}
 
-		UniquePtr& operator=(const UniquePtr&) = delete;
-		UniquePtr& operator=(UniquePtr&& Other) noexcept
-		{
-			if (this != &Other)
-			{
-				T* OldPtr = ptr;
-				ptr = Other.ptr;
-				Other.ptr = nullptr;
-				delete OldPtr;
-			}
-			return *this;
-		}
+		template <typename = void>
+		requires std::is_lvalue_reference_v<D> && std::is_constructible_v<D, D>
+		UniquePtr(pointer p, D d) noexcept : _ptr(p), _d(std::forward<decltype(d)>(d)) {}
 
-		template <typename OtherT>
-		requires std::negation_v<std::is_array<OtherT>> && std::is_convertible_v<OtherT*, T*>
-		UniquePtr& operator=(UniquePtr<OtherT>&& Other) noexcept
-		{
-			delete ptr;
-			ptr = Other.Release();
-			return *this;
-		}
+		template <typename D_noref = std::remove_reference_t<D>>
+		requires std::is_lvalue_reference_v<D> && std::is_constructible_v<D, D_noref&&>
+		UniquePtr(pointer, D_noref&&) = delete;
 
-		UniquePtr& operator=(nullptr_t)
-		{
-			Reset();
-			return *this;
-		}
+		template <typename = void>
+		requires std::negation_v<std::is_lvalue_reference<D>> && std::is_constructible_v<D, const D&>
+		UniquePtr(pointer p, const D& d) noexcept : _ptr(p), _d(std::forward<decltype(d)>(d)) {}
 
-		~UniquePtr()
-		{
-			if (ptr) {
-				delete ptr;
+		template <typename = void>
+		requires std::negation_v<std::is_lvalue_reference<D>> && std::is_constructible_v<D, D&&>
+		UniquePtr(pointer p, D&& d) noexcept : _ptr(p), _d(std::forward<decltype(d)>(d)) {}
+
+		template <typename = void>
+		requires std::is_move_constructible_v<D>
+		UniquePtr(UniquePtr&& r) noexcept : _ptr(r.Release()), _d(std::forward<D>(r._d)) {}
+
+		template <typename U, typename D2>
+		requires std::is_convertible_v<typename UniquePtr<U, D2>::pointer, pointer> && std::negation_v<std::is_pointer<U>> && std::conditional_t<std::is_reference_v<D>, std::is_same<D, D2>, std::is_convertible<D2, D>>::value
+		UniquePtr(UniquePtr<U, D2>&& r) noexcept : _ptr(r.Release()), _d(std::forward<D>(r.GetDeleter())) {}
+
+		~UniquePtr() {
+			if (_ptr) {
+				_d(_ptr);
 			}
 		}
 
-		bool IsValid() const
-		{
-			return ptr != nullptr;
+
+		void Swap(UniquePtr& other) noexcept {
+
 		}
 
-		explicit operator bool() const
-		{
-			return IsValid();
+		pointer Get() const noexcept {
+			return _ptr;
 		}
 
-		bool operator!() const
-		{
-			return !IsValid();
+		D& GetDeleter() noexcept {
+			return _d;
 		}
 
-		T* operator->() const
-		{
-			return ptr;
+		const D& GetDeleter() const noexcept {
+			return _d;
 		}
 
-		T& operator*() const
-		{
-			return *ptr;
+		pointer Release() noexcept {
+			auto temp = _ptr;
+			_ptr = nullptr;
+			return temp;
 		}
 
-		T* Get() const
-		{
-			return ptr;
-		}
-
-		T* Release()
-		{
-			T* Result = ptr;
-			ptr = nullptr;
-			return Result;
-		}
-
-		void Reset(T* InPtr = nullptr)
-		{
-			if (ptr != InPtr)
-			{
-				T* OldPtr = ptr;
-				ptr = InPtr;
-				delete OldPtr;
+		void Reset(pointer _Ptr = nullptr) noexcept {
+			pointer _Old = std::exchange(_ptr, _Ptr);
+			if (_Old) {
+				_d(_Old);
 			}
 		}
 
 	private:
-		T* ptr;
-	};
-
-	template <typename T>
-	class UniquePtr<T[]> {
-	public:
-		UniquePtr() noexcept
-		{
-			ptr = nullptr;
-		}
-
-		UniquePtr(nullptr_t) noexcept
-		{
-			ptr = nullptr;
-		}
-
-		UniquePtr(const UniquePtr&) = delete;
-
-		template <typename U>
-		requires std::is_convertible_v<U(*)[], T(*)[]>
-		explicit UniquePtr(U* InPtr)
-		{
-			ptr = InPtr;
-		}
-
-		UniquePtr(UniquePtr&& Other) noexcept
-		{
-			ptr = Other.ptr;
-			Other.ptr = nullptr;
-		}
-
-		template <typename OtherT>
-		requires std::is_convertible_v<OtherT(*)[], T(*)[]>
-		UniquePtr& operator=(UniquePtr<OtherT>&& Other) noexcept
-		{
-			delete[] ptr;
-			ptr = Other.Release();
-			return *this;
-		}
-
-		UniquePtr& operator=(const UniquePtr& Other) = delete;
-		UniquePtr& operator=(UniquePtr&& Other) noexcept
-		{
-			if (this != &Other)
-			{
-				T* OldPtr = ptr;
-				ptr = Other.ptr;
-				Other.ptr = nullptr;
-				delete[] OldPtr;
-			}
-			return *this;
-		}
-
-		template <typename OtherT>
-		requires std::is_convertible_v<OtherT*, T*>
-		UniquePtr& operator=(UniquePtr<OtherT>&& Other) noexcept
-		{
-			delete[] ptr;
-			ptr = Other.Release();
-			return *this;
-		}
-
-		UniquePtr& operator=(nullptr_t)
-		{
-			Reset();
-			return *this;
-		}
-
-		~UniquePtr()
-		{
-			if (ptr) {
-				delete[] ptr;
-			}
-		}
-
-
-		bool IsValid() const
-		{
-			return ptr != nullptr;
-		}
-
-		explicit operator bool() const
-		{
-			return IsValid();
-		}
-
-		bool operator!() const
-		{
-			return !IsValid();
-		}
-
-		T* operator->() const
-		{
-			return ptr;
-		}
-
-		T& operator*() const
-		{
-			return *ptr;
-		}
-
-		T* Get() const
-		{
-			return ptr;
-		}
-
-		T* Release()
-		{
-			T* Result = ptr;
-			ptr = nullptr;
-			return Result;
-		}
-
-		void Reset(T* InPtr = nullptr)
-		{
-			if (ptr != InPtr)
-			{
-				T* OldPtr = ptr;
-				ptr = InPtr;
-				delete[] OldPtr;
-			}
-		}
-
-	private:
-		T* ptr;
+		pointer _ptr;
+		D _d;
 	};
 }
