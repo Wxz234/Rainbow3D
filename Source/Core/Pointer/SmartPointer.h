@@ -33,7 +33,7 @@ namespace Rainbow3D {
 		requires std::is_lvalue_reference_v<D> && std::is_constructible_v<D, D>
 		UniquePtr(pointer p, D d) noexcept : _ptr(p), _d(std::forward<decltype(d)>(d)) {}
 
-		template <typename D_noref = std::remove_reference_t<D>>
+		template <typename = void>
 		requires std::is_lvalue_reference_v<D> && std::is_constructible_v<D, D_noref&&>
 		UniquePtr(pointer, D_noref&&) = delete;
 
@@ -59,9 +59,41 @@ namespace Rainbow3D {
 			}
 		}
 
+		template <typename = void>
+		requires std::is_move_assignable_v<D>
+		UniquePtr& operator=(UniquePtr&& r) noexcept {
+			Reset(r.Release());
+			_d = std::forward<D>(r.GetDeleter());
+		}
+
+		template <typename U, typename D2>
+		requires std::negation_v<std::is_array<U>> && std::is_assignable_v<D&, D2&&> && std::is_convertible_v<typename UniquePtr<U, D2>::pointer, pointer>
+		UniquePtr& operator=(UniquePtr<U, D2>&& r) noexcept {
+			Reset(r.Release());
+			_d = std::forward<D>(r.GetDeleter());
+		}
+
+		UniquePtr& operator=(std::nullptr_t) noexcept {
+			Reset();
+			return *this;
+		}
+
+		explicit operator bool() const noexcept {
+			return Get() != nullptr;
+		}
+
+		pointer operator->() const noexcept {
+			return Get();
+		}
+
+		std::add_lvalue_reference<T>::type operator*() const noexcept(noexcept(*std::declval<pointer>())) {
+			return *_ptr;
+		}
 
 		void Swap(UniquePtr& other) noexcept {
-
+			UniquePtr temp = std::move(other);
+			other = std::move(*this);
+			*this = std::move(temp);
 		}
 
 		pointer Get() const noexcept {
