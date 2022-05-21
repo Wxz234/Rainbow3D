@@ -240,7 +240,7 @@ namespace Rainbow3D {
 		}
 
 		template <typename U>
-		requires std::is_same_v<U, pointer> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>)
+			requires std::is_same_v<U, pointer> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>)
 		void Reset(U p) noexcept {
 			if (_ptr) {
 				_d(_ptr);
