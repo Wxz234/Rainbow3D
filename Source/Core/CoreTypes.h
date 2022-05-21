@@ -16,5 +16,4 @@ namespace Rainbow3D {
 		virtual ~RainbowObject() {}
 	};
 
-	inline void DestroyRainbowObject(RainbowObject* obj) { delete obj; }
 }

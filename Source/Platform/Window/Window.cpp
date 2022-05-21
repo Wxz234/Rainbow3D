@@ -63,8 +63,8 @@ namespace Rainbow3D {
 		MSG msg;
 	};
 
-	RWindow* CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height) {
-		return new _RWindow(title, width, height);
+	UniquePtr<RWindow> CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height) {
+		return UniquePtr<RWindow>(new _RWindow(title, width, height));
 	}
 
 }

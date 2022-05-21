@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/CoreTypes.h"
+#include "Core/Pointer/SmartPointer.h"
 #include "Platform/Window/Window.h"
 
 namespace Rainbow3D {
@@ -45,7 +46,7 @@ namespace Rainbow3D {
 		virtual void ExecuteCommandList(CommandList* list) = 0;
 	};
 
-	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height);
+	UniquePtr<GraphicsDevice> CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height);
 	CommandList* CreateCommandList(GraphicsDevice* device);
 	RenderTarget* CreateRenderTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format);
 	DepthStencilTarget* CreateDepthStencilTarget(GraphicsDevice* device, uint32 width, uint32 height, FORMAT format);

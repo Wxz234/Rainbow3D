@@ -15,5 +15,5 @@ namespace Rainbow3D {
 		virtual bool IsActive() = 0;
 	};
 
-	RWindow* CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height);
+	UniquePtr<RWindow> CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height);
 }

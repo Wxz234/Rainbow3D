@@ -14,11 +14,8 @@
 #include <string>
 #include <mutex>
 
-#include <boost/shared_ptr.hpp>
 
-void p() {
-	boost::shared_ptr<int> x;
-}
+
 
 namespace Rainbow3D {
 
@@ -250,8 +247,8 @@ namespace Rainbow3D {
 		dx11RenderTarget* temp_present_rt;
 	};
 
-	GraphicsDevice* CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
-		return new dx11GraphicsDevice(context, width, height);
+	UniquePtr<GraphicsDevice> CreateGraphicsDevice(WindowContext* context, uint32 width, uint32 height) {
+		return UniquePtr<GraphicsDevice>(new dx11GraphicsDevice(context, width, height));
 	}
 
 	CommandList* CreateCommandList(GraphicsDevice* device) {
