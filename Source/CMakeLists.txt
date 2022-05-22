@@ -1,7 +1,7 @@
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
-
+	"Core/Log/Log.cpp"
 )
 
 target_compile_definitions(Rainbow3D PRIVATE UNICODE)
