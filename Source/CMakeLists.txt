@@ -8,6 +8,13 @@ file(GLOB_RECURSE imgui
 	"ThirdParty/imgui/imgui_widgets.cpp"
 )
 
+file(GLOB_RECURSE DirectXTex
+	"ThirdParty/DirectXTex/DDSTextureLoader/DDSTextureLoader11.cpp"
+	"ThirdParty/DirectXTex/DDSTextureLoader/DDSTextureLoader11.h"
+	"ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.cpp"
+	"ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
+)
+
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
@@ -18,9 +25,11 @@ add_executable(Rainbow3D WIN32
 	"Render/Graphics/SwapChain.cpp"
 	"Render/Graphics/GraphicsUtility.cpp"
 	${imgui}
+	${DirectXTex}
 )
 
 source_group("imgui" FILES ${imgui})
+source_group("DirectXTex" FILES ${DirectXTex})
 
 target_compile_definitions(Rainbow3D PRIVATE UNICODE _UNICODE)
 target_include_directories(Rainbow3D PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
