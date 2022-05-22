@@ -2,9 +2,7 @@
 #include <format>
 #include <string>
 #include <string_view>
-#include <utility>
 #include <chrono>
-#include <cstdio>
 namespace Rainbow3D {
 
 	namespace LogVerbosity {
