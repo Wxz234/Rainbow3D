@@ -8,11 +8,13 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"Rainbow3D", w, h);
     auto device = CreateDevice();
     auto swapchain = CreateSwapChain(device.Get(), window.Get(), w, h);
+    auto graphicsutility = CreateGraphicsUtility(device.Get(), swapchain.Get());
     window->Show();
     while (window->IsActive()) {
         window->Dispatch();
         swapchain->Present();
     }
+    graphicsutility.Reset();
     swapchain.Reset();
     device.Reset();
     window.Reset();
