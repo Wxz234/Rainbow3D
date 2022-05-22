@@ -5,3 +5,5 @@
 #include "Core/Log/Log.h"
 #include "RObject/RObject.h"
 #include "Platform/Window/Window.h"
+#include "Render/Graphics/Device.h"
+#include "Render/Graphics/SwapChain.h"

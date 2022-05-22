@@ -17,7 +17,7 @@ namespace Rainbow3D {
 
 	class RenderWindow : public RWindow {
 	public:
-		RenderWindow(const wchar_t* title, uint32_t width, uint32_t height) {
+		RenderWindow(const wchar_t* title, uint32 width, uint32 height) {
 			ZeroMemory(&msg, sizeof(MSG));
 			isActive = false;			
 			WNDCLASSEXW wcex = {};
@@ -50,6 +50,12 @@ namespace Rainbow3D {
 			}
 		}
 
+		WindowContext GetContext() {
+			WindowContext _context;
+			_context.context = hwnd;
+			return _context;
+		}
+
 		virtual bool IsActive() { return (WM_QUIT != msg.message) && isActive; }
 
 		bool isActive;
@@ -57,7 +63,7 @@ namespace Rainbow3D {
 		HWND hwnd;
 	};
 
-	UniquePtr<RWindow> CreateRenderWindow(const wchar_t* title, uint32_t width, uint32_t height) {
+	UniquePtr<RWindow> CreateRenderWindow(const wchar_t* title, uint32 width, uint32 height) {
 		return UniquePtr<RWindow>(new RenderWindow(title,width,height));
 	}
 }
