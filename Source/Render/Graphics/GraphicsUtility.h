@@ -5,7 +5,7 @@
 #include "Render/Graphics/SwapChain.h"
 namespace Rainbow3D {
 	class GraphicsUtility : public RObject {
-		
+	public:
 	};
 
 	UniquePtr<GraphicsUtility> CreateGraphicsUtility(Device* device, SwapChain* swapchain);
