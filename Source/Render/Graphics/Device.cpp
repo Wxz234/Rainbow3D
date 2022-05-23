@@ -16,7 +16,7 @@ namespace Rainbow3D {
 			D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, &featureLevels, 1, D3D11_SDK_VERSION, m_Device.GetAddressOf(), nullptr, m_Context.GetAddressOf());
 		}
 
-		void* GetNativeDevice() const noexcept {
+		void* GetNativeObject() const noexcept {
 			return m_Device.Get();
 		}
 

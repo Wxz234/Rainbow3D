@@ -1,10 +1,11 @@
 #pragma once
 #include "Core/Pointer/UniquePtr.h"
 #include "RObject/RObject.h"
+#include "Render/Graphics/NativeObject.h"
 namespace Rainbow3D {
-	class Device : public RObject {
+	class Device : public NativeObject {
 	public:
-		virtual void* GetNativeDevice() const noexcept = 0;
+
 	};
 
 	UniquePtr<Device> CreateDevice();

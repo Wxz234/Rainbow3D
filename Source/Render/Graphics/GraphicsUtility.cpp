@@ -1,5 +1,6 @@
-
 #include "Render/Graphics/GraphicsUtility.h"
+#include "ThirdParty/DirectXTex/DDSTextureLoader/DDSTextureLoader11.h"
+#include "ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
 #include <Windows.h>
 #include <d3d11_4.h>
 #include <dxgi1_6.h>
@@ -64,13 +65,6 @@ namespace Rainbow3D {
 			m_Context->PSSetShader(m_PixelShader.Get(), nullptr, 0);
 
 			CD3D11_SAMPLER_DESC sampler_Desc(D3D11_DEFAULT);
-			//sampler_Desc.BorderColor[0] = 1.F;
-			//sampler_Desc.BorderColor[1] = 0.F;
-			//sampler_Desc.BorderColor[2] = 1.F;
-			//sampler_Desc.BorderColor[3] = 1.F;
-			//sampler_Desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-			//sampler_Desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-			//sampler_Desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
 			m_Device->CreateSamplerState(&sampler_Desc, &m_sampler);
 			m_Context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
 
@@ -97,6 +91,29 @@ namespace Rainbow3D {
 			m_Context->RSSetViewports(1, &viewport);
 		}
 
+		bool _isDDS(const std::wstring& file_str) {
+			if (file_str.ends_with(L".dds") ||
+				file_str.ends_with(L".ddS") ||
+				file_str.ends_with(L".dDs") ||
+				file_str.ends_with(L".Dds") || 
+				file_str.ends_with(L".DDs") || 
+				file_str.ends_with(L".DdS") || 
+				file_str.ends_with(L".dDS") || 
+				file_str.ends_with(L".DDS")
+				) {
+				return true;
+			}
+			return false;
+		}
+
+		//UniquePtr<Texture2D> CreateTextureFromFile(const wchar_t* file) {
+		//	std::wstring file_str = file;
+		//	if (_isDDS(file_str)) {
+		//		//DirectX::CreateDDSTextureFromFile(m_Device.Get(), file,)
+		//	}
+		//	return nullptr;
+		//}
+
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
@@ -114,8 +131,8 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_VS_vertex_Buffers;
 	};
 	UniquePtr<GraphicsUtility> CreateGraphicsUtility(Device* device, SwapChain* swapchain) {
-		ID3D11Device* _device = reinterpret_cast<ID3D11Device*>(device->GetNativeDevice());
-		IDXGISwapChain* _swapchain = reinterpret_cast<IDXGISwapChain*>(swapchain->GetNativeSwapChain());
+		ID3D11Device* _device = reinterpret_cast<ID3D11Device*>(device->GetNativeObject());
+		IDXGISwapChain* _swapchain = reinterpret_cast<IDXGISwapChain*>(swapchain->GetNativeObject());
 		return UniquePtr<GraphicsUtility>(new DX11GraphicsUtility(_device, _swapchain));
 	}
 }

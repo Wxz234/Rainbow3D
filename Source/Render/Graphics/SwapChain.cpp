@@ -37,7 +37,7 @@ namespace Rainbow3D {
 			dxgiFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
 		}
 
-		void* GetNativeSwapChain() const noexcept {
+		void* GetNativeObject() const noexcept {
 			return m_swapChain.Get();
 		}
 
@@ -57,10 +57,8 @@ namespace Rainbow3D {
 		uint32 h;
 	};
 
-
-
 	UniquePtr<SwapChain> CreateSwapChain(Device* device, RWindow* window, uint32 w, uint32 h) {
-		auto device_ptr = reinterpret_cast<ID3D11Device*>(device->GetNativeDevice());
+		auto device_ptr = reinterpret_cast<ID3D11Device*>(device->GetNativeObject());
 		auto _context = window->GetContext();
 		HWND hwnd = reinterpret_cast<HWND> (_context.context);
 		return UniquePtr<SwapChain>(new DX11SwapChain(device_ptr, hwnd, w, h));
