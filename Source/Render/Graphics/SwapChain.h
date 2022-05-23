@@ -7,7 +7,9 @@
 namespace Rainbow3D {
 	class SwapChain : public RObject {
 	public:
+		virtual void* GetNativeSwapChain() const noexcept = 0;
 		virtual void Present() = 0;
+
 	};
 
 	UniquePtr<SwapChain> CreateSwapChain(Device* device, RWindow* window, uint32 w, uint32 h);
