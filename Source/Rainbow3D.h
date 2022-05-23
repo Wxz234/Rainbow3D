@@ -5,10 +5,4 @@
 #include "Core/Log/Log.h"
 #include "RObject/RObject.h"
 #include "Platform/Window/Window.h"
-#include "Render/Graphics/Device.h"
-#include "Render/Graphics/SwapChain.h"
-#include "Render/Graphics/GraphicsUtility.h"
-#include "Render/Graphics/Common.h"
-#include "Render/Graphics/Texture.h"
-#include "Render/Graphics/View.h"
-#include "Render/Graphics/NativeObject.h"
+
