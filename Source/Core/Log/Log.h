@@ -5,26 +5,27 @@
 #include <chrono>
 namespace Rainbow3D {
 
-	namespace LogVerbosity {
-		enum Type {
-			Info = 0,
-			Error = 1,
-			Warning = 2,
-		};
-	}
+	
+	enum class LOG_TYPE {
+		INFO = 0,
+		ERROR = 1,
+		WARNING = 2,
+		UNKNOWN = 3
+	};
+	
 
-	void OutputLogMessage(LogVerbosity::Type log_type, const std::string& log_str);
-	void OutputLogMessage(LogVerbosity::Type log_type, const std::wstring& log_str);
+	void OutputLogMessage(LOG_TYPE log_type, const std::string& log_str);
+	void OutputLogMessage(LOG_TYPE log_type, const std::wstring& log_str);
 	template <typename ...T>
-	inline void RAINBOW_LOG(LogVerbosity::Type log_type, const std::string_view log, T&&... _Args) {
+	inline void RAINBOW_LOG(LOG_TYPE log_type, const std::string_view log, T&&... _Args) {
 		std::string type_str;
-		if (log_type == LogVerbosity::Info) {
+		if (log_type == LOG_TYPE::INFO) {
 			type_str = " INFO ";
 		}
-		else if (log_type == LogVerbosity::Error) {
+		else if (log_type == LOG_TYPE::ERROR) {
 			type_str = " ERROR ";
 		}
-		else if (log_type == LogVerbosity::Warning) {
+		else if (log_type == LOG_TYPE::WARNING) {
 			type_str = " WARNING ";
 		}
 		else  {
@@ -40,15 +41,15 @@ namespace Rainbow3D {
 	}
 
 	template <typename ...T>
-	inline void RAINBOW_LOG(LogVerbosity::Type log_type, const std::wstring_view log, T&&... _Args) {
+	inline void RAINBOW_LOG(LOG_TYPE log_type, const std::wstring_view log, T&&... _Args) {
 		std::wstring type_str;
-		if (log_type == LogVerbosity::Info) {
+		if (log_type == LOG_TYPE::INFO) {
 			type_str = L" INFO ";
 		}
-		else if (log_type == LogVerbosity::Error) {
+		else if (log_type == LOG_TYPE::ERROR) {
 			type_str = L" ERROR ";
 		}
-		else if (log_type == LogVerbosity::Warning) {
+		else if (log_type == LOG_TYPE::WARNING) {
 			type_str = L" WARNING ";
 		}
 		else {
