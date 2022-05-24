@@ -1,7 +1,9 @@
 #include "Render/Graphics/GraphicsUtility.h"
+#include "Render/Graphics/RenderTarget_impl.h"
 #include <d3d11_4.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
+#include <string>
 namespace Rainbow3D {
 
 	class DX11GraphicsUtility : public GraphicsUtility {
