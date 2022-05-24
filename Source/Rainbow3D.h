@@ -7,5 +7,6 @@
 #include "Render/Graphics/Device.h"
 #include "Render/Graphics/SwapChain.h"
 #include "Render/Graphics/GraphicsUtility.h"
+#include "Render/Graphics/RenderTarget.h"
 
 

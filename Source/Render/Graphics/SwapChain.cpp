@@ -43,12 +43,6 @@ namespace Rainbow3D {
 			m_swapChain->Present(1, 0);
 		}
 
-		//virtual uint32 GetWidth() const noexcept {
-		//	return w;
-		//}
-		//virtual uint32 GetHeight() const noexcept {
-		//	return h;
-		//}
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 		uint32 w;
