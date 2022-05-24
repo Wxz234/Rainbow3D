@@ -1,7 +1,5 @@
 #include "Platform/Window/Window.h"
-#include "ThirdParty/imgui/imgui.h"
-#include "ThirdParty/imgui/imgui_impl_win32.h"
-#include "ThirdParty/imgui/imgui_impl_dx11.h"
+
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 namespace Rainbow3D {
 

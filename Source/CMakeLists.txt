@@ -24,9 +24,6 @@ add_executable(Rainbow3D WIN32
 	"Core/Log/Log.cpp"
 	"RObject/RObject.cpp"
 	"Platform/Window/Window.cpp"
-	"Render/Graphics/Device.cpp"
-	"Render/Graphics/SwapChain.cpp"
-	"Render/Graphics/GraphicsUtility.cpp"
 	${imgui}
 	${DirectXTex}
 	${json}
