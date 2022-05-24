@@ -1,12 +1,17 @@
+#include "Core/Log/Log.h"
 #include "Render/Graphics/GraphicsUtility.h"
 #include "Render/Graphics/RenderTarget_impl.h"
 #include "ThirdParty/DirectXTex/DDSTextureLoader/DDSTextureLoader11.h"
 #include "ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
+#include "ThirdParty/imgui/imgui.h"
+#include "ThirdParty/imgui/imgui_impl_win32.h"
+#include "ThirdParty/imgui/imgui_impl_dx11.h"
 #include <d3d11_4.h>
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include <wrl.h>
 #include <objbase.h>
+#include <winerror.h>
 #include <string>
 namespace Rainbow3D {
 
@@ -106,12 +111,24 @@ namespace Rainbow3D {
 			m_swapChain->GetDesc(&desc);
 			CD3D11_VIEWPORT viewport(0.f, 0.f, (float)desc.BufferDesc.Width, (float)desc.BufferDesc.Height);
 			m_Context->RSSetViewports(1, &viewport);
+			imgui_isinit = false;
+		}
+		~DX11GraphicsUtility() {
+			if (imgui_isinit) {
+				ImGui_ImplDX11_Shutdown();
+				ImGui_ImplWin32_Shutdown();
+				ImGui::DestroyContext();
+			}
 		}
 
 		UniquePtr<RenderTarget> CreateRenderTargetFromFile(const wchar_t* file) {
 			Microsoft::WRL::ComPtr<ID3D11Resource> tex;
 			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
-			CoInitialize(NULL);
+			auto hr = CoInitialize(NULL);
+			if (!(hr == S_OK || hr == S_FALSE)) {
+				RAINBOW_LOG(LogVerbosity::Error, "Failed to call CoInitialize.");
+				return nullptr;
+			}
 			if (_isDDS(file)) {
 				DirectX::CreateDDSTextureFromFile(m_Device.Get(), file, &tex, &srv);
 			}
@@ -129,6 +146,18 @@ namespace Rainbow3D {
 			m_Context->Draw(3, 0);
 			m_swapChain->Present(1, 0);
 		}
+
+		void InitImGui(HWND hwnd) {
+			if (!imgui_isinit) {
+				IMGUI_CHECKVERSION();
+				ImGui::CreateContext();
+				ImGuiIO& io = ImGui::GetIO(); (void)io;
+				ImGui_ImplWin32_Init(hwnd);
+				ImGui_ImplDX11_Init(m_Device.Get(), m_Context.Get());
+				imgui_isinit = true;
+			}
+		}
+
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
@@ -147,6 +176,7 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampler;
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_VS_vertex_Buffers;
+		bool imgui_isinit;
 	};
 	UniquePtr<GraphicsUtility> CreateGraphicsUtility(Device* device, SwapChain* swapchain) {
 		ID3D11Device* _device = reinterpret_cast<ID3D11Device*>(device->GetNativePointer());
