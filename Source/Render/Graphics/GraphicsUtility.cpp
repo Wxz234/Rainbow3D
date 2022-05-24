@@ -147,20 +147,20 @@ namespace Rainbow3D {
 			if (imgui_isinit) {
 				//ImGui::Render();
 
-				ImGui_ImplDX11_NewFrame();
-				ImGui_ImplWin32_NewFrame();
-				ImGui::NewFrame();
-				bool show_demo_window = true;
-				ImGui::ShowDemoWindow(&show_demo_window);
-				ImGui::Begin("Another Window", &show_demo_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-				ImGui::Text("Hello from another window!");
-				static int counter = 0;
-				if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-					counter++;
-				ImGui::Text("counter = %d", counter);
-				ImGui::End();
-				ImGui::Render();
-				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+				//ImGui_ImplDX11_NewFrame();
+				//ImGui_ImplWin32_NewFrame();
+				//ImGui::NewFrame();
+				//bool show_demo_window = true;
+				//ImGui::ShowDemoWindow(&show_demo_window);
+				//ImGui::Begin("Another Window", &show_demo_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+				//ImGui::Text("Hello from another window!");
+				//static int counter = 0;
+				//if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+				//	counter++;
+				//ImGui::Text("counter = %d", counter);
+				//ImGui::End();
+				//ImGui::Render();
+				//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 			}
 			m_swapChain->Present(1, 0);
 		}
