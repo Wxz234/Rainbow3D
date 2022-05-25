@@ -20,16 +20,13 @@ namespace Rainbow3D {
 			DWORD stype = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX;
 			AdjustWindowRect(&rc, stype, FALSE);
 			hwnd = CreateWindowExW(0, L"Rainbow3D", title, stype, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
-			
 		}
 
 	    HWND GetHWND() {
 			return hwnd;
 		}
 
-
 		HWND hwnd;
-
 	};
 
 	UniquePtr<RWindow> CreateRenderWindow(const wchar_t* title, uint32 width, uint32 height) {
