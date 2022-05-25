@@ -17,24 +17,24 @@ namespace Rainbow3D {
 		UniquePtr(const UniquePtr&) = delete;
 
 		template <typename = void>
-		requires !std::is_pointer_v<deleter_type> && std::is_default_constructible_v<deleter_type>
+		requires (!std::is_pointer_v<deleter_type>&& std::is_default_constructible_v<deleter_type>)
 		constexpr UniquePtr() noexcept : _ptr(nullptr), _d() {}
 
 		template <typename = void>
-		requires !std::is_pointer_v<deleter_type> && std::is_default_constructible_v<deleter_type>
+		requires (!std::is_pointer_v<deleter_type>&& std::is_default_constructible_v<deleter_type>)
 		constexpr UniquePtr(std::nullptr_t) noexcept : _ptr(nullptr), _d() {}
 
 		//disable CTAD
 		template <typename = void>
-		requires !std::is_pointer_v<deleter_type> && std::is_default_constructible_v<deleter_type>
+		requires (!std::is_pointer_v<deleter_type>&& std::is_default_constructible_v<deleter_type>)
 		explicit UniquePtr(pointer p) noexcept : _ptr(p), _d() {}
 
 		template <typename = void>
-		requires !std::is_lvalue_reference_v<deleter_type> && std::is_constructible_v<deleter_type, const deleter_type&>
+		requires (!std::is_lvalue_reference_v<deleter_type>&& std::is_constructible_v<deleter_type, const deleter_type&>)
 		UniquePtr(pointer p, const deleter_type& d) noexcept : _ptr(p), _d(d) {}
 
 		template <typename = void>
-		requires !std::is_lvalue_reference_v<deleter_type> && std::is_constructible_v<deleter_type, deleter_type&&>
+		requires (!std::is_lvalue_reference_v<deleter_type>&& std::is_constructible_v<deleter_type, deleter_type&&>)
 		UniquePtr(pointer p, deleter_type&& d) noexcept : _ptr(p), _d(std::move(d)) {}
 
 		template <typename = void>
@@ -50,7 +50,7 @@ namespace Rainbow3D {
 		UniquePtr(UniquePtr&& r) noexcept : _ptr(r.Release()), _d(std::forward<deleter_type>(r._d)) {}
 
 		template <typename U, typename E>
-		requires std::is_convertible_v<typename UniquePtr<U, E>::pointer, pointer> && !std::is_array_v<U>&& std::conditional_t<std::is_reference_v<deleter_type>, std::is_same<deleter_type, E>, std::is_convertible<E, deleter_type>>::value
+		requires (std::is_convertible_v<typename UniquePtr<U, E>::pointer, pointer> && !std::is_array_v<U> && std::conditional_t<std::is_reference_v<deleter_type>, std::is_same<deleter_type, E>, std::is_convertible<E, deleter_type>>::value)
 		UniquePtr(UniquePtr<U, E>&& r) noexcept {
 			_ptr = r.Release();
 			_d = std::forward<E>(r.GetDeleter());
@@ -126,7 +126,7 @@ namespace Rainbow3D {
 			return Get();
 		}
 
-		std::add_lvalue_reference<T>::type operator*() const noexcept(noexcept(*std::declval<pointer>())) {
+		typename std::add_lvalue_reference<T>::type operator*() const noexcept(noexcept(*std::declval<pointer>())) {
 			return *_ptr;
 		}
 
@@ -145,23 +145,23 @@ namespace Rainbow3D {
 		UniquePtr(const UniquePtr&) = delete;
 
 		template <typename = void>
-		requires !std::is_pointer_v<deleter_type> && std::is_default_constructible_v<deleter_type>
+		requires (!std::is_pointer_v<deleter_type>&& std::is_default_constructible_v<deleter_type>)
 		constexpr UniquePtr() noexcept : _ptr(nullptr), _d() {}
 
 		template <typename = void>
-		requires !std::is_pointer_v<deleter_type> && std::is_default_constructible_v<deleter_type>
+		requires (!std::is_pointer_v<deleter_type>&& std::is_default_constructible_v<deleter_type>)
 		constexpr UniquePtr(std::nullptr_t) noexcept : _ptr(nullptr), _d() {}
 
 		template <typename U>
-		requires !std::is_pointer_v<deleter_type> && std::is_default_constructible_v<deleter_type> && (std::is_same_v<U, pointer> || std::is_same_v<U, std::nullptr_t> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>))
+		requires (!std::is_pointer_v<deleter_type>&& std::is_default_constructible_v<deleter_type> && (std::is_same_v<U, pointer> || std::is_same_v<U, std::nullptr_t> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>)))
 		explicit UniquePtr(U p) noexcept :_ptr(p), _d() {}
 
 		template <typename U>
-		requires !std::is_lvalue_reference_v<deleter_type> && std::is_constructible_v<deleter_type, const deleter_type&> && (std::is_same_v<U, pointer> || std::is_same_v<U, std::nullptr_t> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>))
+		requires (!std::is_lvalue_reference_v<deleter_type>&& std::is_constructible_v<deleter_type, const deleter_type&> && (std::is_same_v<U, pointer> || std::is_same_v<U, std::nullptr_t> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>)))
 		UniquePtr(U p, const deleter_type& d) noexcept : _ptr(p), _d(d) {}
 
 		template <typename U>
-		requires !std::is_lvalue_reference_v<deleter_type> && std::is_constructible_v<deleter_type, deleter_type&&> && (std::is_same_v<U, pointer> || std::is_same_v<U, std::nullptr_t> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>))
+		requires (!std::is_lvalue_reference_v<deleter_type>&& std::is_constructible_v<deleter_type, deleter_type&&> && (std::is_same_v<U, pointer> || std::is_same_v<U, std::nullptr_t> || (std::is_same_v<pointer, element_type*> && std::is_pointer_v<U> && std::is_convertible_v<std::remove_pointer_t<U>(*)[], element_type(*)[]>)))
 		UniquePtr(U p, deleter_type&& d) noexcept : _ptr(p), _d(std::move(d)) {}
 
 		template <typename U>
