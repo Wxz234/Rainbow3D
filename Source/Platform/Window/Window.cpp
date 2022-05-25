@@ -1,23 +1,6 @@
 #include "Platform/Window/Window.h"
-
-LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#include "Platform/Window/Proc.h"
 namespace Rainbow3D {
-
-	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
-			return true;
-
-		switch (message)
-		{
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-		return 0;
-	}
 
 	class RenderWindow : public RWindow {
 	public:
@@ -34,8 +17,9 @@ namespace Rainbow3D {
 			wcex.hIconSm = LoadIconW(wcex.hInstance, L"IDI_ICON");
 			RegisterClassExW(&wcex);
 			RECT rc = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
-			AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX, FALSE);
-			hwnd = CreateWindowExW(0, L"Rainbow3D", title, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
+			DWORD stype = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX;
+			AdjustWindowRect(&rc, stype, FALSE);
+			hwnd = CreateWindowExW(0, L"Rainbow3D", title, stype, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
 		}
 
 	    HWND GetHWND() {

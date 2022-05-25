@@ -8,6 +8,9 @@
 #include <utility>
 namespace Rainbow3D {
 
+	enum WINDOW_FLAG {
+		BORDERLESS = 0x1,
+	};
 
 	class RWindow : public RObject {
 	public:
