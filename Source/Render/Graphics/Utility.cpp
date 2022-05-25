@@ -56,6 +56,7 @@ namespace Rainbow3D {
 		CD3D11_VIEWPORT viewport(0.f, 0.f, w, h);
 		m_Context->RSSetViewports(1, &viewport);
 	}
+
 	bool _isDDS(const std::wstring& file_str) {
 		if (file_str.ends_with(L".dds") ||
 			file_str.ends_with(L".ddS") ||
@@ -92,5 +93,9 @@ namespace Rainbow3D {
 		else {
 			DirectX::CreateWICTextureFromFile(m_Device.Get(), file, texture, srv);
 		}
+	}
+
+	void Utility::InitBaseColorContext(ID3D11DeviceContext* baseColorContext) {
+
 	}
 }

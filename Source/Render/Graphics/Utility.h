@@ -12,6 +12,16 @@ namespace Rainbow3D {
 		void DrawTexture(ID3D11ShaderResourceView* srv);
 		void CreateTextureFromFile(const wchar_t* file, ID3D11Resource** texture, ID3D11ShaderResourceView** srv);
 
+		HRESULT CreateDeferredContext(ID3D11DeviceContext **defferedContext) {
+			return m_Device->CreateDeferredContext(0, defferedContext);
+		}
+
+		void ExecuteContext(ID3D11CommandList* context) {
+			m_Context->ExecuteCommandList(context, TRUE);
+		}
+
+		void InitBaseColorContext(ID3D11DeviceContext* baseColorContext);
+
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
