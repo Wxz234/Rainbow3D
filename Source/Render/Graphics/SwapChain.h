@@ -37,6 +37,7 @@ namespace Rainbow3D {
 			m_swapChain->Present(1, 0);
 		}
 
+
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 	};
 }

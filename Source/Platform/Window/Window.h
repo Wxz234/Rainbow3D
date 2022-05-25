@@ -1,19 +1,16 @@
 #pragma once
 #include "Core/CoreTypes.h"
 #include "Core/Pointer/UniquePtr.h"
-#include "RObject/RObject.h"
 
 #include <Windows.h>
 #include <functional>
 #include <utility>
 namespace Rainbow3D {
 
-	enum WINDOW_FLAG {
-		BORDERLESS = 0x1,
-	};
-
-	class RWindow : public RObject {
+	class RWindow {
 	public:
+
+		virtual ~RWindow() {}
 		virtual HWND GetHWND() = 0;
 		void Show() {
 			ShowWindow(GetHWND(), SW_SHOWDEFAULT);

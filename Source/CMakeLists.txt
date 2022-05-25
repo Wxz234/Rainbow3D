@@ -22,7 +22,6 @@ add_executable(Rainbow3D WIN32
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
 	"Core/Log/Log.cpp"
-	"RObject/RObject.cpp"
 	"Platform/Window/Window.cpp"
 	${imgui}
 	${DirectXTex}
