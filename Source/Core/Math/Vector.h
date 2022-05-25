@@ -1,5 +1,4 @@
 #pragma once
-#include <DirectXMath.h>
 namespace Rainbow3D {
     struct Vector2
     {
@@ -24,7 +23,7 @@ namespace Rainbow3D {
         float y;
         float z;
 
-        Vector3() { x = 0.f; y = 0.f; z = 0; }
+        Vector3() { x = 0.f; y = 0.f; z = 0.f; }
 
         Vector3(const Vector3&) = default;
         Vector3& operator=(const Vector3&) = default;

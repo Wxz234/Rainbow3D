@@ -12,12 +12,14 @@ namespace Rainbow3D {
 			m_Device->GetImmediateContext(&m_Context);
 		}
 
-		void Init() {
+		void Init();
 
-		}
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
+
+		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
 	};
 
 	inline UniquePtr<Utility> CreateUtility(ID3D11Device* device, IDXGISwapChain* swapchain) {

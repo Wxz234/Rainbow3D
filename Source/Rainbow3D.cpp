@@ -14,6 +14,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"Rainbow3D", w, h);
     auto device = CreateDevice();
     auto swapchain = CreateSwapChain(device->GetDevice(), window->GetHWND(), w, h);
-
+    auto utility = CreateUtility(device->GetDevice(), swapchain->GetSwapChain());
+    utility->Init();
 	return window->Run(Draw, device.Get(), swapchain.Get());
 }
