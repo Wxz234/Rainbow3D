@@ -10,3 +10,5 @@
 #include "Render/Graphics/Device.h"
 #include "Render/Graphics/SwapChain.h"
 #include "Runtime/Mesh/Mesh.h"
+#include "Runtime/Component/BaseComponent.h"
+#include "Runtime/Model/Model.h"
