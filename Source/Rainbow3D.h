@@ -3,6 +3,7 @@
 #include "Core/CoreTemplate.h"
 #include "Core/Pointer/UniquePtr.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Vector.h"
 #include "Platform/Window/Proc.h"
 #include "Platform/Window/Window.h"
 #include "Render/Graphics/PreDef.h"

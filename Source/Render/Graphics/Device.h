@@ -17,6 +17,10 @@ namespace Rainbow3D {
 			return m_Device.Get();
 		}
 
+		ID3D11DeviceContext* GetContext() const {
+			return m_Context.Get();
+		}
+
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;

@@ -38,6 +38,10 @@ namespace Rainbow3D {
 			m_swapChain->Present(1, 0);
 		}
 
+		IDXGISwapChain* GetSwapChain() const {
+			return m_swapChain.Get();
+		}
+
 	private:
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 	};
