@@ -2,10 +2,9 @@
 
 using namespace Rainbow3D;
 
-void Draw(Device* device, SwapChain* swapchain) {
+void Draw(SwapChain* swapchain, Utility* utility, ID3D11ShaderResourceView* srv) {
 
-	auto context = device->GetContext();
-
+    utility->DrawTexture(srv);
     swapchain->Present();
 }
 
@@ -15,6 +14,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto device = CreateDevice();
     auto swapchain = CreateSwapChain(device->GetDevice(), window->GetHWND(), w, h);
     auto utility = CreateUtility(device->GetDevice(), swapchain->GetSwapChain());
-    utility->Init();
-	return window->Run(Draw, device.Get(), swapchain.Get());
+
+    Microsoft::WRL::ComPtr<ID3D11Resource> texture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+    utility->CreateTextureFromFile(L"C:\\Users\\WangYuzhi\\Desktop\\x.jpg", &texture, &srv);
+    return window->Run(Draw, swapchain.Get(), utility.Get(), srv.Get());
 }

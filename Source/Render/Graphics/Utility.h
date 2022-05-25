@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/CoreTypes.h"
 #include "Core/Pointer/UniquePtr.h"
 #include "Render/Graphics/PreDef.h"
 #include "Render/Graphics/SwapChain.h"
@@ -6,15 +7,10 @@
 namespace Rainbow3D {
 	class Utility {
 	public:
-		Utility(ID3D11Device* device, IDXGISwapChain* swapchain) {
-			m_Device = device;
-			m_swapChain = swapchain;
-			m_Device->GetImmediateContext(&m_Context);
-		}
-
-		void Init();
+		Utility(ID3D11Device* device, IDXGISwapChain* swapchain);
 
 		void DrawTexture(ID3D11ShaderResourceView* srv);
+		void CreateTextureFromFile(const wchar_t* file, ID3D11Resource** texture, ID3D11ShaderResourceView** srv);
 
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
@@ -29,6 +25,8 @@ namespace Rainbow3D {
 
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
+		uint32 w;
+		uint32 h;
 	};
 
 	inline UniquePtr<Utility> CreateUtility(ID3D11Device* device, IDXGISwapChain* swapchain) {

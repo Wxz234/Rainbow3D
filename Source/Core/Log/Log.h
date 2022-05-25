@@ -6,11 +6,11 @@
 namespace Rainbow3D {
 
 	
-	enum class LOG_TYPE {
-		INFO = 0,
-		ERROR = 1,
-		WARNING = 2,
-		UNKNOWN = 3
+	enum LOG_TYPE {
+		Info = 0,
+		Error = 1,
+		Warning = 2,
+		Unknown = 3
 	};
 	
 
@@ -19,13 +19,13 @@ namespace Rainbow3D {
 	template <typename ...T>
 	inline void RAINBOW_LOG(LOG_TYPE log_type, const std::string_view log, T&&... _Args) {
 		std::string type_str;
-		if (log_type == LOG_TYPE::INFO) {
+		if (log_type == Info) {
 			type_str = " INFO ";
 		}
-		else if (log_type == LOG_TYPE::ERROR) {
+		else if (log_type == Error) {
 			type_str = " ERROR ";
 		}
-		else if (log_type == LOG_TYPE::WARNING) {
+		else if (log_type == Warning) {
 			type_str = " WARNING ";
 		}
 		else  {
@@ -43,17 +43,17 @@ namespace Rainbow3D {
 	template <typename ...T>
 	inline void RAINBOW_LOG(LOG_TYPE log_type, const std::wstring_view log, T&&... _Args) {
 		std::wstring type_str;
-		if (log_type == LOG_TYPE::INFO) {
-			type_str = L" INFO ";
+		if (log_type == Info) {
+			type_str = " INFO ";
 		}
-		else if (log_type == LOG_TYPE::ERROR) {
-			type_str = L" ERROR ";
+		else if (log_type == Error) {
+			type_str = " ERROR ";
 		}
-		else if (log_type == LOG_TYPE::WARNING) {
-			type_str = L" WARNING ";
+		else if (log_type == Warning) {
+			type_str = " WARNING ";
 		}
 		else {
-			type_str = L" UNKNOWN ";
+			type_str = " UNKNOWN ";
 		}
 
 		const auto local = std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() };
