@@ -5,6 +5,7 @@
 #include "Render/Graphics/SwapChain.h"
 #include "Render/Graphics/Device.h"
 namespace Rainbow3D {
+
 	class Utility {
 	public:
 		Utility(ID3D11Device* device, IDXGISwapChain* swapchain);

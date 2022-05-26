@@ -15,11 +15,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto swapchain = CreateSwapChain(device->GetDevice(), window->GetHWND(), w, h);
     auto utility = CreateUtility(device->GetDevice(), swapchain->GetSwapChain());
 
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext> deferredContext;
-    utility->CreateDeferredContext(&deferredContext);
+    Microsoft::WRL::ComPtr<ID3D11DeviceContext> baseColorContext;
+    utility->CreateDeferredContext(&baseColorContext);
 
-    Microsoft::WRL::ComPtr<ID3D11Resource> texture;
+    utility->InitBaseColorContext(baseColorContext.Get());
+
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
-    utility->CreateTextureFromFile(L"C:\\Users\\WangYuzhi\\Desktop\\x.jpg", &texture, &srv);
+    utility->CreateTextureFromFile(L"C:\\Users\\WangYuzhi\\Desktop\\x.jpg", nullptr, &srv);
     return window->Run(Draw, swapchain.Get(), utility.Get(), srv.Get());
 }

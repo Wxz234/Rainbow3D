@@ -6,7 +6,6 @@
 #include "ThirdParty/DirectXTex/DDSTextureLoader/DDSTextureLoader11.h"
 #include <string>
 namespace Rainbow3D {
-
 	Utility::Utility(ID3D11Device* device, IDXGISwapChain* swapchain) {
 		m_Device = device;
 		m_swapChain = swapchain;
