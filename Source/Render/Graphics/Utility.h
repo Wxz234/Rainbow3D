@@ -23,6 +23,10 @@ namespace Rainbow3D {
 
 		void InitBaseColorContext(ID3D11DeviceContext* baseColorContext);
 
+		uint32 GetMaximumGpuResourceNumber() const {
+			return 128;
+		}
+	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_Context;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;

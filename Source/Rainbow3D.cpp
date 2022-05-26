@@ -2,6 +2,11 @@
 
 using namespace Rainbow3D;
 
+
+void LogicalTick() {
+
+}
+
 void Draw(SwapChain* swapchain, Utility* utility, ID3D11ShaderResourceView* srv) {
 
     utility->DrawTexture(srv);
