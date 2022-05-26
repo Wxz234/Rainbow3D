@@ -4,6 +4,7 @@ using namespace Rainbow3D;
 
 void Draw(SwapChain* swapchain, Utility* utility, ID3D11ShaderResourceView* srv) {
 
+    auto deltaTime = CalculateDeltaTime();
     utility->DrawTexture(srv);
     swapchain->Present();
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/CoreTypes.h"
 #include "Core/CoreTemplate.h"
+#include "Core/CoreChrono.h"
 #include "Core/Pointer/UniquePtr.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector.h"
