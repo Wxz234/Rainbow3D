@@ -27,5 +27,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
     utility->CreateTextureFromFile(L"C:\\Users\\WangYuzhi\\Desktop\\x.jpg", nullptr, &srv);
+
     return window->Run(Draw, swapchain.Get(), utility.Get(), srv.Get());
 }
