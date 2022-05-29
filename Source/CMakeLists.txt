@@ -18,6 +18,11 @@ file(GLOB_RECURSE DirectXTex
 file(GLOB_RECURSE json
 	"ThirdParty/json/json.hpp"
 )
+
+source_group("imgui" FILES ${imgui})
+source_group("DirectXTex" FILES ${DirectXTex})
+source_group("json" FILES ${json})
+
 add_executable(Rainbow3D WIN32 
 	"Rainbow3D.cpp"
 	"Rainbow3D.h"
@@ -28,10 +33,6 @@ add_executable(Rainbow3D WIN32
 	${DirectXTex}
 	${json}
 )
-
-source_group("imgui" FILES ${imgui})
-source_group("DirectXTex" FILES ${DirectXTex})
-source_group("json" FILES ${json})
 
 target_compile_definitions(Rainbow3D PRIVATE UNICODE _UNICODE)
 target_include_directories(Rainbow3D PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
