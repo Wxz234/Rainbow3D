@@ -10,8 +10,8 @@ namespace Rainbow3D {
 		m_Device = device;
 		m_swapChain = swapchain;
 		m_Device->GetImmediateContext(&m_Context);
-		m_Device->CreateVertexShader(g_vs_r, sizeof(g_vs_r), nullptr, &m_VertexShader);
-		m_Device->CreatePixelShader(g_ps_r, sizeof(g_ps_r), nullptr, &m_PixelShader);
+		m_Device->CreateVertexShader(Utility_VS, sizeof(Utility_VS), nullptr, &m_VertexShader);
+		m_Device->CreatePixelShader(Utility_PS, sizeof(Utility_PS), nullptr, &m_PixelShader);
 
 		m_swapChain->GetBuffer(0, IID_PPV_ARGS(&m_texture));
 		m_Device->CreateRenderTargetView(m_texture.Get(), NULL, &m_rtv);
@@ -21,7 +21,7 @@ namespace Rainbow3D {
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
-		m_Device->CreateInputLayout(inputLayout, 2, g_vs_r, sizeof(g_vs_r), &m_pVertexLayout);
+		m_Device->CreateInputLayout(inputLayout, 2, Utility_VS, sizeof(Utility_VS), &m_pVertexLayout);
 
 		CD3D11_SAMPLER_DESC sampler_Desc(D3D11_DEFAULT);
 		m_Device->CreateSamplerState(&sampler_Desc, &m_sampler);

@@ -16,12 +16,12 @@ namespace Rainbow3D {
 			dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory));
 
 			DXGI_SWAP_CHAIN_DESC1 _desc = {};
-			_desc.BufferCount = 2;
+			_desc.BufferCount = 1;
 			_desc.Width = w;
 			_desc.Height = h;
-			_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 			_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-			_desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+			_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			_desc.SampleDesc.Count = 1;
 			_desc.SampleDesc.Quality = 0;
 			_desc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
