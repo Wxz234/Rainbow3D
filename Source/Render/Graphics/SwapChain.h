@@ -35,7 +35,7 @@ namespace Rainbow3D {
 		}
 
 		void Present() {
-			m_swapChain->Present(1, 0);
+			m_swapChain->Present(0, 0);
 		}
 
 		IDXGISwapChain* GetSwapChain() const {

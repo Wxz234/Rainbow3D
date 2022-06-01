@@ -2,6 +2,7 @@
 #include "Render/Graphics/Utility.h"
 #include "Shader/Utility_VS.h"
 #include "Shader/Utility_PS.h"
+#include "Shader/Utility_CS_Exposure.h"
 #include "ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
 #include "ThirdParty/DirectXTex/DDSTextureLoader/DDSTextureLoader11.h"
 #include <string>
@@ -54,6 +55,27 @@ namespace Rainbow3D {
 
 		CD3D11_VIEWPORT viewport(0.f, 0.f, w, h);
 		m_Context->RSSetViewports(1, &viewport);
+		//add compute shader
+		CD3D11_TEXTURE2D_DESC exposuredesc(DXGI_FORMAT_R32G32B32A32_FLOAT, 256, 256, 1, 1, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS);
+		m_Device->CreateTexture2D(&exposuredesc, nullptr, &m_exposure);
+
+		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+		uavDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+		uavDesc.Texture2D.MipSlice = 0;
+		m_Device->CreateUnorderedAccessView(m_exposure.Get(), &uavDesc, &m_e_uav);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC(
+			m_exposure.Get(),
+			D3D11_SRV_DIMENSION_TEXTURE2D,
+			DXGI_FORMAT_R32G32B32A32_FLOAT
+		);
+		m_Device->CreateShaderResourceView(m_exposure.Get(), &srvDesc, &m_e_srv);
+		m_e_srv->SetPrivateData(WKPDID_D3DDebugObjectName, 4, "esrv");
+		m_Device->CreateComputeShader(Utility_CS_Exposure, sizeof(Utility_CS_Exposure), nullptr, &m_cs);
+		m_Context->CSSetShader(m_cs.Get(), nullptr, 0);
+
+		m_Context->CSSetSamplers(0, 1, m_sampler.GetAddressOf());
 	}
 
 	bool _isDDS(const std::wstring& file_str) {
@@ -73,10 +95,21 @@ namespace Rainbow3D {
 
 	void Utility::DrawTexture(ID3D11ShaderResourceView* srv) {
 
-		m_Context->PSSetShaderResources(0, 1, &srv);
-		ID3D11RenderTargetView* plist[] = { m_rtv.Get() };
-		m_Context->OMSetRenderTargets(1, plist, nullptr);
+		m_Context->CSSetUnorderedAccessViews(0, 1, m_e_uav.GetAddressOf(), nullptr);
+		m_Context->CSSetSamplers(0, 1, m_sampler.GetAddressOf());
+		m_Context->CSSetShaderResources(0, 1, &srv);
+		m_Context->Dispatch(32, 32, 1);
+
+		ID3D11UnorderedAccessView* releaseUAV[1] = { nullptr };
+		m_Context->CSSetUnorderedAccessViews(0, 1, releaseUAV, nullptr);
+
+		ID3D11RenderTargetView* drawRTV[] = { m_rtv.Get() };
+		m_Context->OMSetRenderTargets(1, drawRTV, nullptr);
+		m_Context->PSSetShaderResources(0, 1, m_e_srv.GetAddressOf());
 		m_Context->Draw(3, 0);
+
+		ID3D11ShaderResourceView* releaseSRV[1] = { nullptr };
+		m_Context->PSSetShaderResources(0, 1, releaseSRV);
 	}
 
 	void Utility::CreateTextureFromFile(const wchar_t* file, ID3D11Resource** texture, ID3D11ShaderResourceView** srv) {
