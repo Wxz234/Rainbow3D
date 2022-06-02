@@ -28,7 +28,6 @@ add_executable(Rainbow3D WIN32
 	"Rainbow3D.h"
 	"Core/Log/Log.cpp"
 	"Platform/Window/Window.cpp"
-	"Render/Graphics/Utility.cpp"
 	${imgui}
 	${DirectXTex}
 	${json}
