@@ -1,7 +1,9 @@
 #pragma once
 #include "Core/CoreTypes.h"
 #include "Core/Pointer/UniquePtr.h"
+#include "Platform/Window/Window.h"
 #include "Render/Graphics/PreDef.h"
+#include "Render/Graphics/Device.h"
 
 namespace Rainbow3D {
 	class SwapChain {
@@ -46,7 +48,7 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 	};
 
-	inline UniquePtr<SwapChain> CreateSwapChain(ID3D11Device* device, HWND hwnd, uint32 w, uint32 h) {
-		return UniquePtr<SwapChain>(new SwapChain(device, hwnd, w, h));
+	inline UniquePtr<SwapChain> CreateSwapChain(Device *device,RWindow *window, uint32 w, uint32 h) {
+		return UniquePtr<SwapChain>(new SwapChain(device->GetDevice(), window->GetHWND(), w, h));
 	}
 }

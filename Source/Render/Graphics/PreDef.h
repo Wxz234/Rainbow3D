@@ -5,6 +5,3 @@
 #include <d3dcommon.h>
 #include <wrl/client.h>
 #include <combaseapi.h>
-namespace Rainbow3D {
-
-}

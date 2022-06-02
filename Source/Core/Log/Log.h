@@ -5,27 +5,25 @@
 #include <chrono>
 namespace Rainbow3D {
 
-	
 	enum LOG_TYPE {
-		Info = 0,
-		Error = 1,
-		Warning = 2,
-		Unknown = 3
+		RAINBOW_INFO = 0,
+		RAINBOW_ERROR = 1,
+		RAINBOW_WARNING = 2,
+		RAINBOW_UNKNOWN = 3
 	};
 	
-
 	void OutputLogMessage(LOG_TYPE log_type, const std::string& log_str);
 	void OutputLogMessage(LOG_TYPE log_type, const std::wstring& log_str);
 	template <typename ...T>
 	inline void RAINBOW_LOG(LOG_TYPE log_type, const std::string_view log, T&&... _Args) {
 		std::string type_str;
-		if (log_type == Info) {
+		if (log_type == RAINBOW_INFO) {
 			type_str = " INFO ";
 		}
-		else if (log_type == Error) {
+		else if (log_type == RAINBOW_ERROR) {
 			type_str = " ERROR ";
 		}
-		else if (log_type == Warning) {
+		else if (log_type == RAINBOW_WARNING) {
 			type_str = " WARNING ";
 		}
 		else  {
@@ -43,13 +41,13 @@ namespace Rainbow3D {
 	template <typename ...T>
 	inline void RAINBOW_LOG(LOG_TYPE log_type, const std::wstring_view log, T&&... _Args) {
 		std::wstring type_str;
-		if (log_type == Info) {
+		if (log_type == RAINBOW_INFO) {
 			type_str = " INFO ";
 		}
-		else if (log_type == Error) {
+		else if (log_type == RAINBOW_ERROR) {
 			type_str = " ERROR ";
 		}
-		else if (log_type == Warning) {
+		else if (log_type == RAINBOW_WARNING) {
 			type_str = " WARNING ";
 		}
 		else {

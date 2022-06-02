@@ -1,9 +1,11 @@
 #include "Rainbow3D.h"
-
+#include "ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
 using namespace Rainbow3D;
 
-void Draw(SwapChain* swapchain) {
-
+void Draw(SwapChain* swapchain, PostProcess* postprocess, ID3D11Resource* res, ID3D11ShaderResourceView* srv) {
+    ID3D11Texture2D* tex = nullptr;
+    res->QueryInterface(&tex);
+    postprocess->Render(tex, srv);
     swapchain->Present();
 }
 
@@ -11,7 +13,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     constexpr uint32 w = 1000, h = 800;
     auto window = CreateRenderWindow(L"Rainbow3D", w, h);
     auto device = CreateDevice();
-    auto swapchain = CreateSwapChain(device->GetDevice(), window->GetHWND(), w, h);
+    auto swapchain = CreateSwapChain(device.Get(), window.Get(), w, h);
+    auto postprocess = CreatePostProcess(device.Get(), swapchain.Get(), RAINBOW_TONEMAPPING);
 
-    return window->Run(Draw, swapchain.Get());
+    ID3D11Resource* tex = nullptr;
+    ID3D11ShaderResourceView* srv = nullptr;
+    CoInitialize(nullptr);
+    DirectX::CreateWICTextureFromFile(device->GetDevice(), L"C:\\Users\\WangYuzhi\\Desktop\\x.bmp", &tex, &srv);
+    return window->Run(Draw, swapchain.Get(), postprocess.Get(), tex, srv);
 }
