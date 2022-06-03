@@ -39,24 +39,33 @@ namespace Rainbow3D {
 			m_Device->CreateTexture2D(&m_output_tex_Desc, nullptr, &m_output_tex);
 			m_Device->CreateUnorderedAccessView(m_output_tex.Get(), nullptr, &m_output_uav);
 			m_Device->CreateShaderResourceView(m_output_tex.Get(), nullptr, &m_output_srv);
+
+
 		}
 
 		void Render(ID3D11Texture2D* texture, ID3D11ShaderResourceView* srv) {
 
-			uint32 texture_message[4] = { 55,55,w,h };
+			uint32 texture_message[4] = { h,w,w,h };
 			D3D11_MAPPED_SUBRESOURCE mappedRes{};
 			m_postprocess_context->Map(m_copy_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedRes);
 			std::memcpy(mappedRes.pData, texture_message, 4);
 			m_postprocess_context->Unmap(m_copy_buffer.Get(), 0);
 
+			m_postprocess_context->CSSetShader(m_copy_shader.Get(), 0, 0);
+
 			m_postprocess_context->CSSetConstantBuffers(0, 1, m_copy_buffer.GetAddressOf());
 			m_postprocess_context->CSSetShaderResources(0, 1, &srv);
 			m_postprocess_context->CSSetUnorderedAccessViews(0, 1, m_output_uav.GetAddressOf(), nullptr);
-			m_postprocess_context->Dispatch(w / 8, h / 8, 1);
+			m_postprocess_context->CSSetSamplers(0, 1, m_copy_sample.GetAddressOf());
+			m_postprocess_context->Dispatch(1,1, 1);
 
-			Microsoft::WRL::ComPtr<ID3D11CommandList> post_cmd_list;
+
 			m_postprocess_context->FinishCommandList(FALSE, &post_cmd_list);
 			m_Context->ExecuteCommandList(post_cmd_list.Get(), TRUE);
+		}
+
+		ID3D11ShaderResourceView* GetOutput() {
+			return m_output_srv.Get();
 		}
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> m_Device;
@@ -73,6 +82,8 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_output_tex;
 		Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> m_output_uav;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_output_srv;
+
+		Microsoft::WRL::ComPtr<ID3D11CommandList> post_cmd_list;
 		uint32 m_flag;
 
 		uint32 w;

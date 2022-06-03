@@ -4,16 +4,13 @@ RWTexture2D<float4> g_Output : register(u0);
 
 cbuffer texture_message : register(b0)
 {
-	uint width;
-	uint height;
-	uint w;
-	uint h;
+	uint4 _para;
 }
 
 
-[numthreads(8, 8, 1)]
-void main(uint2 DTid : SV_DispatchThreadID)
+[numthreads(32, 32, 1)]
+void main(uint3 DTid : SV_DispatchThreadID)
 {
-	//g_Output[DTid.xy] = g_Tex.SampleLevel(g_Sampler, float2(DTid.x / ((float)w), DTid.y / ((float)h)), 0);
-	g_Output[DTid.xy] = float4(1, 1, 1, 1);
+	g_Output[DTid.xy] = g_Tex.SampleLevel(g_Sampler, float2((float(DTid.x)) / ((float)_para.z), (float(DTid.y)) / ((float)_para.w)), 0);
+	//g_Output[DTid.xy] = float4(1, 1, 1, 1);
 }
