@@ -25,6 +25,8 @@ namespace Rainbow3D {
 
 			return static_cast<int>(msg.wParam);
 		}
+
+		virtual void Resize(uint32 width, uint32 height) = 0;
 	};
 
 	UniquePtr<RWindow> CreateRenderWindow(const wchar_t* title, uint32 width, uint32 height);

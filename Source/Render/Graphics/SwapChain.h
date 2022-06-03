@@ -34,6 +34,8 @@ namespace Rainbow3D {
 
 			dxgiFactory->CreateSwapChainForHwnd(m_Device.Get(), hwnd, &_desc, &fsSwapChainDesc, nullptr, &m_swapChain);
 			dxgiFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
+			this->w = w;
+			this->h = h;
 		}
 
 		void Present() {
@@ -44,8 +46,16 @@ namespace Rainbow3D {
 			return m_swapChain.Get();
 		}
 
+		void Resize(uint32 w, uint32 h) {
+			this->w = w;
+			this->h = h;
+			//todo swapchain
+		}
+
 	private:
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
+		uint32 w; 
+		uint32 h;
 	};
 
 	inline UniquePtr<SwapChain> CreateSwapChain(Device *device,RWindow *window, uint32 w, uint32 h) {
