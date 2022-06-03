@@ -46,11 +46,11 @@ namespace Rainbow3D {
 			return m_swapChain.Get();
 		}
 
-		void Resize(uint32 w, uint32 h) {
-			this->w = w;
-			this->h = h;
-			//todo swapchain
-		}
+		//void Resize(uint32 w, uint32 h) {
+		//	this->w = w;
+		//	this->h = h;
+		//	//todo swapchain
+		//}
 
 	private:
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;

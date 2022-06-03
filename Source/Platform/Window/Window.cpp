@@ -1,5 +1,9 @@
 #include "Platform/Window/Window.h"
 #include "Platform/Window/Proc.h"
+#include "Core/Log/Log.h"
+#define DEFAULT_WIDTH 50
+#define DEFAULT_HEIGHT 50
+
 namespace Rainbow3D {
 
 	class RenderWindow : public RWindow {
@@ -17,9 +21,9 @@ namespace Rainbow3D {
 			wcex.hIconSm = LoadIconW(wcex.hInstance, L"IDI_ICON");
 			RegisterClassExW(&wcex);
 			RECT rc = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
-			DWORD stype = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX;
+			stype = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX;
 			AdjustWindowRect(&rc, stype, FALSE);
-			hwnd = CreateWindowExW(0, L"Rainbow3D", title, stype, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
+			hwnd = CreateWindowExW(0, L"Rainbow3D", title, stype, DEFAULT_WIDTH, DEFAULT_HEIGHT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
 			w = width;
 			h = height;
 		}
@@ -27,17 +31,24 @@ namespace Rainbow3D {
 	    HWND GetHWND() {
 			return hwnd;
 		}
-
-		void Resize(uint32 width, uint32 height) {
-			w = width;
-			h = height;
-			//todo change window
+		void Show() {
+			ShowWindow(hwnd, SW_SHOWDEFAULT);
 		}
+
+		//void Resize(uint32 width, uint32 height) {
+		//	w = width;
+		//	h = height;
+		//	RECT rc = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
+		//	AdjustWindowRect(&rc, stype, FALSE);
+		//	SetWindowPos(hwnd, HWND_TOP, DEFAULT_WIDTH, DEFAULT_HEIGHT, rc.right - rc.left, rc.bottom - rc.top, SWP_SHOWWINDOW);
+		//}
 
 		HWND hwnd;
 
 		uint32 w;
 		uint32 h;
+
+		DWORD stype;
 	};
 
 	UniquePtr<RWindow> CreateRenderWindow(const wchar_t* title, uint32 width, uint32 height) {

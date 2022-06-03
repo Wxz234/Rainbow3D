@@ -7,8 +7,6 @@
 
 #include <cstring>
 
-#define LUMINANCE_TEXTURE_WIDTH 256
-#define LUMINANCE_TEXTURE_HEIGHT 256
 namespace Rainbow3D {
 
 	enum POSTPROCESS_TYPE {
@@ -40,11 +38,6 @@ namespace Rainbow3D {
 			m_Device->CreateUnorderedAccessView(m_output_tex.Get(), nullptr, &m_output_uav);
 			m_Device->CreateShaderResourceView(m_output_tex.Get(), nullptr, &m_output_srv);
 
-		}
-
-		void Resize(uint32 w,uint32 h) {
-			this->w = w;
-			this->h = h;
 		}
 
 		void Render(ID3D11ShaderResourceView* srv) {

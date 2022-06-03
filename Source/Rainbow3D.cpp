@@ -2,7 +2,8 @@
 #include "ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
 using namespace Rainbow3D;
 
-void Draw(SwapChain* swapchain, PostProcess* postprocess, ID3D11ShaderResourceView* srv, Utility* util) {
+void Draw(RWindow *window,SwapChain* swapchain, PostProcess* postprocess, ID3D11ShaderResourceView* srv, Utility* util) {
+    
 
     postprocess->Render(srv);
     util->DrawTexture(postprocess->GetOutput());
@@ -21,5 +22,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     CoInitialize(nullptr);
     DirectX::CreateWICTextureFromFile(device->GetDevice(), L"C:\\Users\\WangYuzhi\\Desktop\\no.png", &tex, &srv);
     auto util = CreateUtility(device->GetDevice(), swapchain->GetSwapChain());
-    return window->Run(Draw, swapchain.Get(), postprocess.Get(), srv, util.Get());
+
+    window->Show();
+    return RunLoop(Draw, window.Get(), swapchain.Get(), postprocess.Get(), srv, util.Get());
 }
