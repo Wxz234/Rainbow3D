@@ -7,10 +7,10 @@ cbuffer texture_message : register(b0)
 	uint4 _para;
 }
 
-
-[numthreads(32, 32, 1)]
-void main(uint3 DTid : SV_DispatchThreadID)
+[numthreads(8, 8, 1)]
+void main(uint2 DTid : SV_DispatchThreadID)
 {
-	g_Output[DTid.xy] = g_Tex.SampleLevel(g_Sampler, float2((float(DTid.x)) / ((float)_para.z), (float(DTid.y)) / ((float)_para.w)), 0);
-	//g_Output[DTid.xy] = float4(1, 1, 1, 1);
+	if (DTid.x < _para.x && DTid.y < _para.y) {
+		g_Output[DTid] = g_Tex.SampleLevel(g_Sampler, float2(DTid.x / (float)_para.x, DTid.y / (float)_para.y), 0);
+	}
 }

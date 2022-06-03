@@ -88,7 +88,8 @@ namespace Rainbow3D {
 		m_Context->PSSetShaderResources(0, 1, &srv);
 
 		m_Context->Draw(3, 0);
-
+		ID3D11ShaderResourceView*  releaseSRV[1] = {nullptr};
+		m_Context->PSSetShaderResources(0, 1, releaseSRV);
 	}
 
 	void Utility::CreateTextureFromFile(const wchar_t* file, ID3D11Resource** texture, ID3D11ShaderResourceView** srv) {
