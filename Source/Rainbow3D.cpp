@@ -5,8 +5,7 @@ using namespace Rainbow3D;
 void Draw(RWindow *window,SwapChain* swapchain, PostProcess* postprocess, ID3D11ShaderResourceView* srv, Utility* util) {
     
 
-    postprocess->Render(srv);
-    util->DrawTexture(postprocess->GetOutput());
+
     swapchain->Present();
 }
 
@@ -15,7 +14,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"Rainbow3D", w, h);
     auto device = CreateDevice();
     auto swapchain = CreateSwapChain(device.Get(), window.Get(), w, h);
-    auto postprocess = CreatePostProcess(device.Get(), swapchain.Get(), RAINBOW_TONEMAPPING);
 
     ID3D11Resource* tex = nullptr;
     ID3D11ShaderResourceView* srv = nullptr;
@@ -24,5 +22,5 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto util = CreateUtility(device->GetDevice(), swapchain->GetSwapChain());
 
     window->Show();
-    return RunLoop(Draw, window.Get(), swapchain.Get(), postprocess.Get(), srv, util.Get());
+    return 1;
 }

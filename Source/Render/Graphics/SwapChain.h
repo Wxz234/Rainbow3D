@@ -46,6 +46,13 @@ namespace Rainbow3D {
 			return m_swapChain.Get();
 		}
 
+		uint32 GetWidth() const {
+			return w;
+		}
+		uint32 GetHeight() const {
+			return h;
+		}
+
 		//void Resize(uint32 w, uint32 h) {
 		//	this->w = w;
 		//	this->h = h;

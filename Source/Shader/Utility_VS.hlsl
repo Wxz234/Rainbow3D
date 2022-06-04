@@ -1,15 +1,10 @@
-struct VSIN {
-	float4 pos : POSITION;
-	float2 uv : TEXCOORD;
+struct VSQuadOut {
+	float4 position : SV_Position;
+	float2 texcoord: TexCoord;
 };
-struct VSOUT {
-	float4 mypos : SV_POSITION;
-	float2 uv : TEXCOORD;
-};
-VSOUT main(VSIN vs_in)
-{
-	VSOUT vs_out;
-	vs_out.mypos = vs_in.pos;
-	vs_out.uv = vs_in.uv;
-	return vs_out;
+VSQuadOut main(uint VertexID: SV_VertexID) {// ouputs a full screen quad with tex coords
+	VSQuadOut Out;
+	Out.texcoord = float2((VertexID << 1) & 2, VertexID & 2);
+	Out.position = float4(Out.texcoord * float2(2.0f, -2.0f) + float2(-1.0f, 1.0f), 0.0f, 1.0f);
+	return Out;
 }
