@@ -36,6 +36,9 @@ namespace Rainbow3D {
 			dxgiFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
 			this->w = w;
 			this->h = h;
+
+			m_swapChain->GetBuffer(0, IID_PPV_ARGS(&m_texture));
+			m_Device->CreateRenderTargetView(m_texture.Get(), NULL, &m_rtv);
 		}
 
 		void Present() {
@@ -53,6 +56,10 @@ namespace Rainbow3D {
 			return h;
 		}
 
+		ID3D11RenderTargetView* GetRTV()const {
+			return m_rtv.Get();
+		}
+
 		//void Resize(uint32 w, uint32 h) {
 		//	this->w = w;
 		//	this->h = h;
@@ -61,6 +68,8 @@ namespace Rainbow3D {
 
 	private:
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rtv;
 		uint32 w; 
 		uint32 h;
 	};

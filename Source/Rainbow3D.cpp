@@ -2,10 +2,10 @@
 #include "ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
 using namespace Rainbow3D;
 
-void Draw(RWindow *window,SwapChain* swapchain, PostProcess* postprocess, ID3D11ShaderResourceView* srv, Utility* util) {
+void Draw(SwapChain* swapchain,PostProcess * postprocess, ID3D11ShaderResourceView* srv) {
     
-
-
+    auto rtv = swapchain->GetRTV();
+    postprocess->Process(rtv, srv);
     swapchain->Present();
 }
 
@@ -14,7 +14,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"Rainbow3D", w, h);
     auto device = CreateDevice();
     auto swapchain = CreateSwapChain(device.Get(), window.Get(), w, h);
-
+    auto postprocess = CreatePostProcess(device.Get(), swapchain.Get(), 0);
     ID3D11Resource* tex = nullptr;
     ID3D11ShaderResourceView* srv = nullptr;
     CoInitialize(nullptr);
@@ -22,5 +22,5 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto util = CreateUtility(device->GetDevice(), swapchain->GetSwapChain());
 
     window->Show();
-    return 1;
+    return RunLoop(Draw, swapchain.Get(), postprocess.Get(), srv);
 }
