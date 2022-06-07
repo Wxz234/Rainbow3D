@@ -1,58 +1,83 @@
-#define NUM_HISTOGRAM_BINS 256
-#define HISTOGRAM_THREADS_PER_DIMENSION 16
-#define EPSILON 0.005
-Texture2D HDRTexture : register(t0);
-RWByteAddressBuffer LuminanceHistogram : register(u0);
+#define HISTOGRAM_BINS          128
+#define HISTOGRAM_TEXELS        HISTOGRAM_BINS / 4
+#define HISTOGRAM_THREAD_X              16
+#define HISTOGRAM_THREAD_Y              16
+#define HISTOGRAM_REDUCTION_THREAD_X    HISTOGRAM_THREAD_X
+#define HISTOGRAM_REDUCTION_THREAD_Y    HISTOGRAM_BINS / HISTOGRAM_THREAD_Y
+#define HISTOGRAM_REDUCTION_ALT_PATH    0
 
-cbuffer LuminanceHistogramBuffer : register(b0)
-{
-    uint inputWidth;
-    uint inputHeight;
-    //float minLogLuminance;
-    //float oneOverLogLuminanceRange;
+#define HISTOGRAM_REDUCTION_BINS HISTOGRAM_REDUCTION_THREAD_X * HISTOGRAM_REDUCTION_THREAD_Y
+
+RWStructuredBuffer<uint> _HistogramBuffer :register(u0);
+Texture2D _Source : register(t0);
+SamplerState sampler_LinearClamp: register(s0);
+groupshared uint gs_histogram[HISTOGRAM_BINS];
+
+cbuffer Params  : register(b0) {
+    float4 _ScaleOffsetRes;
 };
 
-groupshared uint HistogramShared[NUM_HISTOGRAM_BINS];
-
-float GetLuminance(float3 color)
+float GetHistogramBinFromLuminance(float value, float2 scaleOffset)
 {
-    return dot(color, float3(0.2127f, 0.7152f, 0.0722f));
+    return saturate(log2(value) * scaleOffset.x + scaleOffset.y);
 }
 
-uint HDRToHistogramBin(float3 hdrColor)
+[numthreads(HISTOGRAM_THREAD_X, HISTOGRAM_THREAD_Y, 1)]
+void main(uint2 dispatchThreadId : SV_DispatchThreadID, uint2 groupThreadId : SV_GroupThreadID)
 {
-    const float minLogLuminance = -10.0;
-    const float oneOverLogLuminanceRange = 1.0 / 12.0;
-    float luminance = GetLuminance(hdrColor);
 
-    if (luminance < EPSILON)
+    const uint localThreadId = groupThreadId.y * HISTOGRAM_THREAD_X + groupThreadId.x;
+
+    // Clears the shared memory
+
+    if (localThreadId < HISTOGRAM_BINS)
     {
-        return 0;
+        gs_histogram[localThreadId] = 0u;
     }
 
-    float logLuminance = saturate((log2(luminance) - minLogLuminance) * oneOverLogLuminanceRange);
-    return (uint)(logLuminance * 254.0 + 1.0);
-}
 
-
-[numthreads(HISTOGRAM_THREADS_PER_DIMENSION, HISTOGRAM_THREADS_PER_DIMENSION, 1)]
-void main(uint groupIndex : SV_GroupIndex, uint3 threadId : SV_DispatchThreadID)
-{
-    HistogramShared[groupIndex] = 0;
+    float2 ipos = float2(dispatchThreadId) * 2.0;
 
     GroupMemoryBarrierWithGroupSync();
 
-    if (threadId.x < inputWidth && threadId.y < inputHeight)
+    // Gather local group histogram
+    if (ipos.x < _ScaleOffsetRes.z && ipos.y < _ScaleOffsetRes.w)
     {
-        float3 hdrColor = HDRTexture.Load(int3(threadId.xy, 0)).rgb;
-        uint binIndex = HDRToHistogramBin(hdrColor);
-        InterlockedAdd(HistogramShared[binIndex], 1);
+        uint weight = 1u;
+        float2 sspos = ipos / _ScaleOffsetRes.zw;
+
+        // Vignette weighting to put more focus on what's in the center of the screen
+
+        {
+            float2 d = abs(sspos - (0.5).xx);
+            float vfactor = saturate(1.0 - dot(d, d));
+            vfactor *= vfactor;
+            weight = (uint)(64.0 * vfactor);
+        }
+
+
+        float3 color = _Source.SampleLevel(sampler_LinearClamp, sspos, 0.0).xyz; // Bilinear downsample 2x
+        float luminance = dot(color, float3(0.2125, 0.7154, 0.0721));
+        float logLuminance = GetHistogramBinFromLuminance(luminance, _ScaleOffsetRes.xy);
+        uint idx = (uint)(logLuminance * (HISTOGRAM_BINS - 1u));
+        InterlockedAdd(gs_histogram[idx], weight);
     }
 
     GroupMemoryBarrierWithGroupSync();
 
-    LuminanceHistogram.InterlockedAdd(groupIndex * 4, HistogramShared[groupIndex]);
+    // Merge everything
+
+
+    if (localThreadId < HISTOGRAM_BINS)
+    {
+        InterlockedAdd(_HistogramBuffer[localThreadId], gs_histogram[localThreadId]);
+    }
+
 }
 
-
-
+[numthreads(HISTOGRAM_THREAD_X, 1, 1)]
+void KEyeHistogramClear(uint dispatchThreadId : SV_DispatchThreadID)
+{
+    if (dispatchThreadId < HISTOGRAM_BINS)
+        _HistogramBuffer[dispatchThreadId] = 0u;
+}

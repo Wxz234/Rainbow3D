@@ -4,8 +4,7 @@ struct VSQuadOut {
 };
 Texture2D g_Tex : register(t0);
 SamplerState g_Sampler : register(s0);
-RWBuffer<float> LuminanceOutput : register(u2);
-
+RWTexture2D<float> _Destination : register(u1);
 float3 ACESToneMapping(float3 color, float adapted_lum)
 {
 	const float A = 2.51f;
@@ -17,11 +16,9 @@ float3 ACESToneMapping(float3 color, float adapted_lum)
 	color *= adapted_lum;
 	return (color * (A * color + B)) / (color * (C * color + D) + E);
 }
-
 float4 main(VSQuadOut vs_out) : SV_TARGET
 {
-	float3 color = g_Tex.Sample(g_Sampler,vs_out.texcoord).xyz;
-	float adapted_lum = LuminanceOutput[0];
-	float3 newcolor = ACESToneMapping(color, adapted_lum);
-	return g_Tex.Sample(g_Sampler, vs_out.texcoord);
+	float4 color = g_Tex.Sample(g_Sampler,vs_out.texcoord);
+	float3 newcolor = ACESToneMapping(color.xyz, _Destination[uint2(0, 0)].x);
+	return float4(_Destination[uint2(0, 0)].x, 1, 1, 1.0f);
 }

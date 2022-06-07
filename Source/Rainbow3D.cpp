@@ -5,7 +5,7 @@ using namespace Rainbow3D;
 void Draw(SwapChain* swapchain, ToneMapping* tm, ID3D11Resource* tex, ID3D11ShaderResourceView* srv) {
     
     auto rtv = swapchain->GetRTV();
-    tm->SetParameter(tex, srv, 0.001f);
+    tm->SetParameter(srv);
     tm->Render(rtv);
     //postprocess->Process(rtv, srv);
     swapchain->Present();
