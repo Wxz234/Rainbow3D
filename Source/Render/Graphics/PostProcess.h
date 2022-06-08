@@ -14,6 +14,7 @@ namespace Rainbow3D {
 
 			m_Device->GetImmediateContext(&m_Context);
 		}
+		virtual ~PostProcess() {}
 
 	protected:
 

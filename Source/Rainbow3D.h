@@ -11,5 +11,6 @@
 #include "Render/Graphics/SwapChain.h"
 #include "Render/Graphics/PostProcess.h"
 #include "Render/Graphics/ToneMapping.h"
+#include "Render/Graphics/FXAA.h"
 #include "Render/Graphics/GBuffer.h"
 #include "Util/Util.h"
