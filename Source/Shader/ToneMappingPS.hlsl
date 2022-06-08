@@ -26,5 +26,5 @@ float4 main(VSQuadOut vs_out) : SV_TARGET
 	float exposure = alpha / log_lum;
 	float4 color = g_Tex.Sample(g_Sampler, vs_out.texcoord);
 	float3 newcolor = ACESToneMapping(color.xyz, exposure);
-	return float4(newcolor, 1.0f);
+	return clamp(float4(newcolor, 1.0f), float4(0, 0, 0, 1), float4(1, 1, 1, 1));
 }
