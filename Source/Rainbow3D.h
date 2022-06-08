@@ -10,5 +10,5 @@
 #include "Render/Graphics/Device.h"
 #include "Render/Graphics/SwapChain.h"
 #include "Render/Graphics/PostProcess.h"
-#include "Render/Graphics/Util.h"
+#include "Render/Graphics/ToneMapping.h"
 #include "Util/Util.h"
