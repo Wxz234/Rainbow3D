@@ -5,7 +5,7 @@
 namespace Rainbow3D {
 	class ToneMapping : public PostProcess {
 	public:
-		ToneMapping(ID3D11Device* device, IDXGISwapChain* swapchain) : PostProcess(device, swapchain) {
+		ToneMapping(ID3D11Device* device) : PostProcess(device) {
 			Create_internal_ps_context();
 			Create_default_sampler();
 			create_default_vs();
@@ -55,7 +55,7 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_log_luminance_tex_rtv;
 	};
 
-	inline UniquePtr<ToneMapping> CreateToneMapping(Device* device, SwapChain* swapchain) {
-		return UniquePtr<ToneMapping>(new ToneMapping(device->GetDevice(), swapchain->GetSwapChain()));
+	inline UniquePtr<ToneMapping> CreateToneMapping(Device* device) {
+		return UniquePtr<ToneMapping>(new ToneMapping(device->GetDevice()));
 	}
 }

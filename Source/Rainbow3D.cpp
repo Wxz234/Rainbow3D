@@ -26,7 +26,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     D3D11_TEXTURE2D_DESC pDesc{};
     mytex->GetDesc(&pDesc);
 
-    auto tm = CreateToneMapping(device.Get(), swapchain.Get());
+    auto tm = CreateToneMapping(device.Get());
     window->Show();
     return RunLoop(Draw, swapchain.Get(), tm.Get(), mytex, srv);
 }
