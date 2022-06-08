@@ -2,6 +2,8 @@ struct VSQuadOut {
 	float4 position : SV_Position;
 	float2 texcoord: TexCoord;
 };
+
+
 Texture2D g_Tex : register(t0);
 Texture2D Luminance : register(t1);
 SamplerState g_Sampler : register(s0);
@@ -19,8 +21,10 @@ float3 ACESToneMapping(float3 color, float adapted_lum)
 }
 float4 main(VSQuadOut vs_out) : SV_TARGET
 {
-	float exposure = exp(Luminance.mips[10][uint2(0,0)].x);
-	float3 color = g_Tex.Sample(g_Sampler, vs_out.texcoord).xyz;
-	float3 newcolor = ACESToneMapping(color, exposure);
-	return float4(exposure, exposure, exposure, 1.0f);
+	float log_lum = exp(Luminance.mips[9][uint2(0,0)].x);
+	float alpha = 1.03 - 2.0 / (2.0 + log10(log_lum + 1.0));
+	float exposure = alpha / log_lum;
+	float4 color = g_Tex.Sample(g_Sampler, vs_out.texcoord);
+	float3 newcolor = ACESToneMapping(color.xyz, exposure);
+	return float4(newcolor, 1.0f);
 }

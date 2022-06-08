@@ -11,6 +11,10 @@ float GetLuminance(float3 color)
 }
 float main(VSQuadOut vs_out) : SV_TARGET
 {
-	float lum = log(GetLuminance(g_Tex.Sample(g_Sampler, vs_out.texcoord).xyz));
-	return lum;
+	float4 color = g_Tex.Sample(g_Sampler, vs_out.texcoord);
+	float lum = GetLuminance(color.xyz);
+	if (lum < 0.005) {
+		lum = 0.005;
+	}
+	return log(lum);
 }
