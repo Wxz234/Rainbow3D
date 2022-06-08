@@ -13,7 +13,7 @@ namespace Rainbow3D {
 			m_Device->CreatePixelShader(LogLuminancePS, sizeof(LogLuminancePS), nullptr, &m_log_luminance_ps);
 			m_Device->CreatePixelShader(ToneMappingPS, sizeof(ToneMappingPS), nullptr, &m_draw_ps);
 
-			CD3D11_TEXTURE2D_DESC luminance_tex_desc(DXGI_FORMAT_R32_FLOAT, 512, 512, 1, 10, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
+			CD3D11_TEXTURE2D_DESC luminance_tex_desc(DXGI_FORMAT_R16_FLOAT, 512, 512, 1, 10, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
 			luminance_tex_desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 			m_Device->CreateTexture2D(&luminance_tex_desc, nullptr, &m_log_luminance_tex);
 			m_Device->CreateShaderResourceView(m_log_luminance_tex.Get(), nullptr, &m_log_luminance_tex_srv);
