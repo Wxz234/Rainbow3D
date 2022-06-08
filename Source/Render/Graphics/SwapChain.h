@@ -60,6 +60,10 @@ namespace Rainbow3D {
 			return m_rtv.Get();
 		}
 
+		ID3D11Texture2D* GetBuffer() const {
+			return m_texture.Get();
+		}
+
 		//void Resize(uint32 w, uint32 h) {
 		//	this->w = w;
 		//	this->h = h;

@@ -3,11 +3,10 @@
 #include "ThirdParty/DirectXTex/WICTextureLoader/WICTextureLoader11.h"
 using namespace Rainbow3D;
 
-void Draw(SwapChain* swapchain, ToneMapping* tm, ID3D11Resource* tex, ID3D11ShaderResourceView* srv) {
+void Draw(SwapChain* swapchain, ToneMapping* tm, ID3D11Texture2D* tex, ID3D11ShaderResourceView* srv) {
     
     auto rtv = swapchain->GetRTV();
-    tm->SetParameter(srv);
-    tm->Render(rtv);
+    tm->Render(tex, srv, swapchain->GetBuffer(), swapchain->GetRTV());
     //postprocess->Process(rtv, srv);
     swapchain->Present();
 }
@@ -29,5 +28,5 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     auto tm = CreateToneMapping(device.Get(), swapchain.Get());
     window->Show();
-    return RunLoop(Draw, swapchain.Get(), tm.Get(), tex, srv);
+    return RunLoop(Draw, swapchain.Get(), tm.Get(), mytex, srv);
 }

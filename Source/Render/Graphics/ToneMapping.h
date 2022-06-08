@@ -5,7 +5,7 @@
 namespace Rainbow3D {
 	class ToneMapping : public PostProcess {
 	public:
-		ToneMapping(ID3D11Device* device, IDXGISwapChain* swapchain, uint32 w, uint32 h) : PostProcess(device, swapchain, w, h) {
+		ToneMapping(ID3D11Device* device, IDXGISwapChain* swapchain) : PostProcess(device, swapchain) {
 			Create_internal_ps_context();
 			Create_default_sampler();
 			create_default_vs();
@@ -20,10 +20,8 @@ namespace Rainbow3D {
 			m_Device->CreateRenderTargetView(m_log_luminance_tex.Get(), nullptr, &m_log_luminance_tex_rtv);
 		}
 
-		void SetParameter(ID3D11ShaderResourceView* srv) {
-			m_srv = srv;
-		}
-		void Render(ID3D11RenderTargetView* rtv) {
+
+		void Render(ID3D11Texture2D* src_texture, ID3D11ShaderResourceView* srv, ID3D11Texture2D* dst_texture, ID3D11RenderTargetView* rtv) {
 			m_postprocess_ps_context->VSSetShader(m_default_vs_shader.Get(), 0, 0);
 			m_postprocess_ps_context->PSSetShader(m_log_luminance_ps.Get(), 0, 0);
 			m_postprocess_ps_context->OMSetRenderTargets(1, m_log_luminance_tex_rtv.GetAddressOf(), nullptr);
@@ -31,21 +29,23 @@ namespace Rainbow3D {
 			m_postprocess_ps_context->RSSetViewports(1, &viewport);
 			m_postprocess_ps_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-			m_postprocess_ps_context->PSSetShaderResources(0, 1, m_srv.GetAddressOf());
+			m_postprocess_ps_context->PSSetShaderResources(0, 1, &srv);
 			m_postprocess_ps_context->PSSetSamplers(0, 1, m_default_sampler.GetAddressOf());
 			m_postprocess_ps_context->Draw(3, 0);
 			m_postprocess_ps_context->GenerateMips(m_log_luminance_tex_srv.Get());
 			m_postprocess_ps_context->PSSetShader(m_draw_ps.Get(), 0, 0);
 			m_postprocess_ps_context->OMSetRenderTargets(1, &rtv, nullptr);
 			m_postprocess_ps_context->PSSetShaderResources(1, 1, m_log_luminance_tex_srv.GetAddressOf());
-			viewport.Width = (float)w;
-			viewport.Height = (float)h;
+			D3D11_TEXTURE2D_DESC texdesc;
+			dst_texture->GetDesc(&texdesc);
+			viewport.Width = (float)texdesc.Width;
+			viewport.Height = (float)texdesc.Height;
+
 			m_postprocess_ps_context->RSSetViewports(1, &viewport);
 			m_postprocess_ps_context->Draw(3, 0);
 			commit_ps_list();
 		}
 	private:
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_srv;
 
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_log_luminance_ps;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_draw_ps;
@@ -56,6 +56,6 @@ namespace Rainbow3D {
 	};
 
 	inline UniquePtr<ToneMapping> CreateToneMapping(Device* device, SwapChain* swapchain) {
-		return UniquePtr<ToneMapping>(new ToneMapping(device->GetDevice(), swapchain->GetSwapChain(), swapchain->GetWidth(), swapchain->GetHeight()));
+		return UniquePtr<ToneMapping>(new ToneMapping(device->GetDevice(), swapchain->GetSwapChain()));
 	}
 }

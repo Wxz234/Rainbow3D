@@ -10,15 +10,12 @@ namespace Rainbow3D {
 
 	class PostProcess {
 	public:
-		PostProcess(ID3D11Device* device, IDXGISwapChain* swapchain,uint32 w,uint32 h) {
+		PostProcess(ID3D11Device* device, IDXGISwapChain* swapchain) {
 			m_Device = device;
 			m_swapChain = swapchain;
 			m_Device->GetImmediateContext(&m_Context);
-			this->w = w;
-			this->h = h;
 		}
 
-		virtual void Render(ID3D11RenderTargetView* rtv) = 0;
 	protected:
 
 		void Create_internal_ps_context() {
@@ -51,8 +48,5 @@ namespace Rainbow3D {
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> m_default_sampler;
 
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_default_vs_shader;
-		uint32 w;
-		uint32 h;
 	};
-
 }
