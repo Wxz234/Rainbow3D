@@ -7,10 +7,34 @@ namespace Rainbow3D{
     class Device {
     public:
         Device(){
+#ifdef _DEBUG
+            Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+            D3D12GetDebugInterface(__uuidof(**(&debugController)), &debugController);
+            debugController->EnableDebugLayer();
+#endif // _DEBUG
             D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_0, __uuidof(**(&m_device)), &m_device);
+            D3D12_COMMAND_QUEUE_DESC desc{};
+            desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+            m_device->CreateCommandQueue(&desc, __uuidof(**(&m_main_queue)), &m_main_queue);
+        }
+
+        ID3D12CommandQueue* GetMainQueue() const {
+            return m_main_queue.Get();
         }
     private:
+
+        //void WaitForGpu() {
+        //    m_commandQueue->Signal(m_fence.Get(), m_fenceValues[m_frameIndex]);
+
+        //    // Wait until the fence has been processed.
+        //    ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_frameIndex], m_fenceEvent));
+        //    WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
+
+        //    // Increment the fence value for the current frame.
+        //    m_fenceValues[m_frameIndex]++;
+        //}
         Microsoft::WRL::ComPtr<ID3D12Device6> m_device;
+        Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_main_queue;
     };
 
     inline std::unique_ptr<Device> CreateDevice() {
