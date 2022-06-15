@@ -11,6 +11,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     auto window = CreateRenderWindow(L"RainbowEditor", w, h);
     auto device = CreateDevice();
     auto swapchain = CreateSwapChain(device.get(), window.get(), w, h);
+    auto pp = isXXX();
+
 
     auto device_ptr = device->GetDevice();
     window->Show();
