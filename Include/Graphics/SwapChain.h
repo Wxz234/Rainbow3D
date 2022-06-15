@@ -17,7 +17,7 @@ namespace Rainbow3D {
             CreateDXGIFactory2(flag, __uuidof(**(&m_factory)), &m_factory);
 
             DXGI_SWAP_CHAIN_DESC1 _desc = {};
-            _desc.BufferCount = 3;
+            _desc.BufferCount = FRAME_NUM;
             _desc.Width = w;
             _desc.Height = h;
             _desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
