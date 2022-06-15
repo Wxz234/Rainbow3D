@@ -1,6 +1,7 @@
 #pragma once
 #include "CorePreDef.h"
 #include <d3d12.h>
+#include <dxgi1_6.h>
 #include <wrl/client.h>
 
 namespace Rainbow3D{
@@ -21,18 +22,15 @@ namespace Rainbow3D{
         ID3D12CommandQueue* GetMainQueue() const {
             return m_main_queue.Get();
         }
+
+        void WaitSwapChain(IDXGISwapChain* swapchain) {
+            Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapchain;
+            swapchain->QueryInterface(__uuidof(**(&_swapchain)), &_swapchain);
+
+        }
+
     private:
 
-        //void WaitForGpu() {
-        //    m_commandQueue->Signal(m_fence.Get(), m_fenceValues[m_frameIndex]);
-
-        //    // Wait until the fence has been processed.
-        //    ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_frameIndex], m_fenceEvent));
-        //    WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
-
-        //    // Increment the fence value for the current frame.
-        //    m_fenceValues[m_frameIndex]++;
-        //}
         Microsoft::WRL::ComPtr<ID3D12Device6> m_device;
         Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_main_queue;
     };

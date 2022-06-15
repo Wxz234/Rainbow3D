@@ -6,9 +6,9 @@
 #include <wrl/client.h>
 
 namespace Rainbow3D {
-    class Swapchain {
+    class SwapChain {
     public:
-        Swapchain(ID3D12CommandQueue* queue, HWND hwnd, uint32 w, uint32 h) {
+        SwapChain(ID3D12CommandQueue* queue, HWND hwnd, uint32 w, uint32 h) {
             UINT32 flag = 0;
 #ifdef _DEBUG
             flag = DXGI_CREATE_FACTORY_DEBUG;
@@ -38,12 +38,16 @@ namespace Rainbow3D {
         void Present(uint32 sync) {
             m_swapchain->Present(sync, 0);
         }
+
+        IDXGISwapChain* GetSwapChain() const {
+            return m_swapchain.Get();
+        }
     private:
         Microsoft::WRL::ComPtr<IDXGIFactory7> m_factory;
         Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapchain;
     };
 
-    inline std::unique_ptr<Swapchain> CreateSwapchain(Device* device, RWindow* window, uint32 w, uint32 h) {
-        return std::unique_ptr<Swapchain>(new Swapchain(device->GetMainQueue(), window->GetHWND(), w, h));
+    inline std::unique_ptr<SwapChain> CreateSwapChain(Device* device, RWindow* window, uint32 w, uint32 h) {
+        return std::unique_ptr<SwapChain>(new SwapChain(device->GetMainQueue(), window->GetHWND(), w, h));
     }
 }
