@@ -5,5 +5,5 @@
 namespace Rainbow3D{
     class Device {
     public:
-    }
+    };
 }
