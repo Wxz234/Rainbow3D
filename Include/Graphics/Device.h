@@ -30,6 +30,10 @@ namespace Rainbow3D{
             return m_device.Get();
         }
 
+        void Execute(ID3D12CommandList *list) {
+            m_main_queue->ExecuteCommandLists(1, &list);
+        }
+
         void WaitSwapChain(IDXGISwapChain* swapchain) {
             Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapchain;
             swapchain->QueryInterface(__uuidof(**(&_swapchain)), &_swapchain);

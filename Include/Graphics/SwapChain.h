@@ -52,6 +52,8 @@ namespace Rainbow3D {
                 m_device->CreateRenderTargetView(m_renderTargets.Get(), nullptr, rtvHandle);
                 rtvHandle.ptr = rtvHandle.ptr + m_rtvDescriptorSize;
             }
+
+            m_swapchain.As(&m_swapChain);
         }
 
         void Present(uint32 sync) {
@@ -62,6 +64,10 @@ namespace Rainbow3D {
             return m_swapchain.Get();
         }
 
+        uint32 GetIndex() const {
+            return m_swapChain->GetCurrentBackBufferIndex();
+        }
+
         D3D12_CPU_DESCRIPTOR_HANDLE GetRTV(uint32 n) const {
             auto rtvHandle = m_rtvHeap->GetCPUDescriptorHandleForHeapStart();
             rtvHandle.ptr = rtvHandle.ptr + n * m_rtvDescriptorSize;
@@ -70,6 +76,7 @@ namespace Rainbow3D {
     private:
         Microsoft::WRL::ComPtr<IDXGIFactory7> m_factory;
         Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapchain;
+        Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapChain;
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
         uint32 m_rtvDescriptorSize;
     };

@@ -6,6 +6,7 @@
 #define NOMINMAX
 #endif
 #include <Windows.h>
+#include <wrl/client.h>
 #include <memory>
 #include <cstdint>
 
