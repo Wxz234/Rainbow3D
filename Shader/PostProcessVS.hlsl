@@ -2,6 +2,7 @@ struct VSQuadOut {
 	float4 position : SV_Position;
 	float2 texcoord: TexCoord;
 };
+
 VSQuadOut main(uint VertexID: SV_VertexID) {
 	VSQuadOut Out;
 

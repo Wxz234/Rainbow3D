@@ -3,3 +3,4 @@
 #include "Platform/Window.h"
 #include "Graphics/Device.h"
 #include "Graphics/SwapChain.h"
+#include "Graphics/RootSignature.h"
