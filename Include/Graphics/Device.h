@@ -13,7 +13,7 @@ namespace Rainbow3D{
             D3D12GetDebugInterface(__uuidof(**(&debugController)), &debugController);
             debugController->EnableDebugLayer();
 #endif // _DEBUG
-            D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_0, __uuidof(**(&m_device)), &m_device);
+            D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_2, __uuidof(**(&m_device)), &m_device);
             D3D12_COMMAND_QUEUE_DESC desc{};
             desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
             m_device->CreateCommandQueue(&desc, __uuidof(**(&m_main_queue)), &m_main_queue);
