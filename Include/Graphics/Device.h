@@ -56,7 +56,7 @@ namespace Rainbow3D{
             m_fence->SetEventOnCompletion(m_fenceValues[m_frameIndex], m_fenceEvent);
             WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
             m_fenceValues[m_frameIndex]++;
-
+            OutputDebugStringA("123\n");
             CloseHandle(m_fenceEvent);
         }
     private:
