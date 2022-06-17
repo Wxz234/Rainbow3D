@@ -50,8 +50,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     auto device_ptr = device->GetDevice();
     //device_ptr->CreateCommandAllocator()
-    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mainRenderAllocator[FRAME_NUM];
-    for (uint32 i = 0;i < FRAME_NUM; ++i) {
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mainRenderAllocator[FRAME_COUNT];
+    for (uint32 i = 0;i < FRAME_COUNT; ++i) {
         device_ptr->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(&mainRenderAllocator[i]), &mainRenderAllocator[i]);
     }
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> mainRenderlist;

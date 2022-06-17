@@ -62,7 +62,7 @@ namespace Rainbow3D{
         uint32 m_frameIndex = 0;
         HANDLE m_fenceEvent;
         Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
-        uint64 m_fenceValues[FRAME_NUM]{};
+        uint64 m_fenceValues[FRAME_COUNT]{};
 
         Microsoft::WRL::ComPtr<ID3D12Device6> m_device;
         Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_main_queue;
