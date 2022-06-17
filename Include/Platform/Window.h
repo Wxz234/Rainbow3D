@@ -1,6 +1,6 @@
 #pragma once
 #include "CorePreDef.h"
-
+#include <functional>
 namespace Rainbow3D {
 
     inline LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -54,9 +54,9 @@ namespace Rainbow3D {
 				if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 					TranslateMessage(&msg);
 					DispatchMessage(&msg);
-				}else std::invoke(std::forward<Function>(f), std::forward<Args>(args)...);
+				}
+				std::invoke(std::forward<Function>(f), std::forward<Args>(args)...);
 			}
-
 			return static_cast<int>(msg.wParam);
 		}
 	private:

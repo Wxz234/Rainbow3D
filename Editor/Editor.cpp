@@ -38,6 +38,7 @@ void Draw(Device* device, SwapChain* swapchain, Microsoft::WRL::ComPtr<ID3D12Com
     device->Execute(list);
     swapchain->Present(0);
     device->WaitSwapChain(swapchain->GetSwapChain());
+
 }
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
@@ -85,5 +86,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     device4->CreateGraphicsPipelineState(&psoDesc, __uuidof(&pipeline), &pipeline);
 
     window->Show();
-    return window->RunLoop(Draw, device.get(), swapchain.get(), mainRenderAllocator, mainRenderlist.Get(), rootsignature.Get(), pipeline.Get());
+    window->RunLoop(Draw, device.get(), swapchain.get(), mainRenderAllocator, mainRenderlist.Get(), rootsignature.Get(), pipeline.Get());
+    device.reset();
+    return 0;
 }
