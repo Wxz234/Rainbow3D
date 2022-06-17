@@ -8,6 +8,3 @@ add_library(RainbowShader STATIC
 	${CMAKE_SOURCE_DIR}/Shader/TestMeshShader.hlsl
 )
 
-target_link_libraries(RainbowShader PRIVATE RainbowCore)
-target_compile_definitions(RainbowShader PRIVATE UNICODE _UNICODE)
-target_include_directories(RainbowShader PRIVATE "${CMAKE_SOURCE_DIR}/Include")
