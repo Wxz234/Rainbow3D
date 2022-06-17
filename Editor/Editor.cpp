@@ -85,7 +85,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> pipeline;
     device4->CreateGraphicsPipelineState(&psoDesc, __uuidof(&pipeline), &pipeline);
 
-    window->Show();
     window->RunLoop(Draw, device.get(), swapchain.get(), mainRenderAllocator, mainRenderlist.Get(), rootsignature.Get(), pipeline.Get());
     device.reset();
     return 0;

@@ -49,6 +49,7 @@ namespace Rainbow3D {
 
 		template <typename Function, typename... Args>
 		int RunLoop(Function&& f, Args&&... args) {
+			Show();
 			MSG msg{};
 			while (msg.message != WM_QUIT) {
 				if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
