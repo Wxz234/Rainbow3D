@@ -5,5 +5,5 @@ project(Rainbow3D)
 
 add_subdirectory("Core")
 add_subdirectory("Shader")
-#add_subdirectory("Runtime")
+add_subdirectory("Runtime")
 add_subdirectory("Editor")
