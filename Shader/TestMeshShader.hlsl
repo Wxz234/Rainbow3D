@@ -14,10 +14,12 @@ VSQuadOut getoutput(uint index) {
 [NumThreads(1, 1, 1)]
 [OutputTopology("triangle")]
 void main(
-	out vertices VSQuadOut verts[3]
+	out vertices VSQuadOut verts[3],
+	out indices uint3 indexx[1]
 ) {
 	SetMeshOutputCounts(3, 1);
 	verts[0] = getoutput(0);
 	verts[1] = getoutput(1);
 	verts[2] = getoutput(2);
+	indexx[0] = uint3(0, 1, 2);
 }

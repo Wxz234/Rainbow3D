@@ -1,9 +1,10 @@
 #include "Rainbow3D.h"
 #include "Shader/PostProcessVS.h"
 #include "Shader/PostProcessPS.h"
+#include "Shader/TestMeshShader.h"
 #include "d3dx12.h"
 using namespace Rainbow3D;
-void Draw(Device* device, SwapChain* swapchain, Microsoft::WRL::ComPtr<ID3D12CommandAllocator>* pAllocator, ID3D12GraphicsCommandList* list, ID3D12RootSignature*root, ID3D12PipelineState *pso) {
+void Draw(Device* device, SwapChain* swapchain, Microsoft::WRL::ComPtr<ID3D12CommandAllocator>* pAllocator, ID3D12GraphicsCommandList6* list, ID3D12RootSignature*root, ID3D12PipelineState *pso) {
     auto index = swapchain->GetIndex();
     pAllocator[index]->Reset();
     list->Reset(pAllocator[index].Get(), pso);
@@ -27,8 +28,8 @@ void Draw(Device* device, SwapChain* swapchain, Microsoft::WRL::ComPtr<ID3D12Com
     // Record commands.
     const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
     list->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-    list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    list->DrawInstanced(3, 1, 0, 0);
+
+    list->DispatchMesh(1, 1, 1);
 
     // Indicate that the back buffer will now be used to present.
     barrier = CD3DX12_RESOURCE_BARRIER::Transition(buffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
@@ -53,7 +54,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     for (uint32 i = 0;i < FRAME_NUM; ++i) {
         device_ptr->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(&mainRenderAllocator[i]), &mainRenderAllocator[i]);
     }
-    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mainRenderlist;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> mainRenderlist;
     Microsoft::WRL::ComPtr<ID3D12Device4> device4;
     device_ptr->QueryInterface(device4.ReleaseAndGetAddressOf());
     device4->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT, D3D12_COMMAND_LIST_FLAG_NONE, __uuidof(&mainRenderlist), &mainRenderlist);
@@ -82,10 +83,31 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDesc.SampleDesc.Count = 1;
 
+    D3DX12_MESH_SHADER_PIPELINE_STATE_DESC meshDesc = {};
+    meshDesc.pRootSignature = rootsignature.Get();
+    meshDesc.MS = { TestMeshShader,sizeof(TestMeshShader) };
+    meshDesc.PS = { PostProcessPS,sizeof(PostProcessPS) };
+    meshDesc.NumRenderTargets = 1;
+    meshDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    meshDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);    // CW front; cull back
+    meshDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);         // Opaque
+    meshDesc.DepthStencilState.DepthEnable = FALSE;
+    meshDesc.DepthStencilState.StencilEnable = FALSE;
+    meshDesc.SampleMask = UINT_MAX;
+    meshDesc.SampleDesc = DefaultSampleDesc();
+
+    auto psoStream = CD3DX12_PIPELINE_MESH_STATE_STREAM(meshDesc);
+
+    D3D12_PIPELINE_STATE_STREAM_DESC streamDesc;
+    streamDesc.pPipelineStateSubobjectStream = &psoStream;
+    streamDesc.SizeInBytes = sizeof(psoStream);
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mesh_pipeline;
+    device4->CreatePipelineState(&streamDesc, __uuidof(&mesh_pipeline), &mesh_pipeline);
+
     Microsoft::WRL::ComPtr<ID3D12PipelineState> pipeline;
     device4->CreateGraphicsPipelineState(&psoDesc, __uuidof(&pipeline), &pipeline);
 
-    window->RunLoop(Draw, device.get(), swapchain.get(), mainRenderAllocator, mainRenderlist.Get(), rootsignature.Get(), pipeline.Get());
+    window->RunLoop(Draw, device.get(), swapchain.get(), mainRenderAllocator, mainRenderlist.Get(), rootsignature.Get(), mesh_pipeline.Get());
     device.reset();
     return 0;
 }
