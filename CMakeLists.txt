@@ -4,5 +4,6 @@ set(CMAKE_CXX_STANDARD 20)
 project(Rainbow3D)
 
 add_subdirectory("Core")
-add_subdirectory("Compile")
+add_subdirectory("Shader")
+#add_subdirectory("Runtime")
 add_subdirectory("Editor")
