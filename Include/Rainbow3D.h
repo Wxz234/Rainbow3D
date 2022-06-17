@@ -8,3 +8,4 @@
 #include "Runtime/Animation/Animation.h"
 #include "Runtime/GameObject/GameObject.h"
 #include "Runtime/GameObject/CameraObject.h"
+#include "Runtime/GameObject/ModelObject.h"
