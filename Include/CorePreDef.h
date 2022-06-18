@@ -8,6 +8,7 @@
 #include <Windows.h>
 #include <wrl/client.h>
 #include <memory>
+#include <vector>
 #include <cstdint>
 
 namespace Rainbow3D {
