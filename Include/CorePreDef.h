@@ -7,6 +7,7 @@
 #endif
 #include <Windows.h>
 #include <wrl/client.h>
+#include <DirectXMath.h>
 #include <memory>
 #include <vector>
 #include <cstdint>

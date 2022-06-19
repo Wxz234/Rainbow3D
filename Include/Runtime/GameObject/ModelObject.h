@@ -6,7 +6,9 @@
 namespace Rainbow3D {
 	class ModelObject : public GameObject {
 	public:
-		void LoadMesh() {}
+		void AddSubMesh(const SubMesh& submesh) {
+			mesh.AddSubMesh(submesh);
+		}
 	private:
 		MeshComponent mesh;
 	};

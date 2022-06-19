@@ -8,9 +8,22 @@
 #include <string>
 #include <cstddef>
 
-
 namespace Rainbow3D {
+
+	DirectX::XMFLOAT3 GetNormal(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b, const DirectX::XMFLOAT3& c) {
+		auto _a = DirectX::XMLoadFloat3(&a);
+		auto _b = DirectX::XMLoadFloat3(&b);
+		auto _c = DirectX::XMLoadFloat3(&c);
+		auto _ab = DirectX::XMVectorSubtract(_a, _b);
+		auto _ac = DirectX::XMVectorSubtract(_a, _c);
+		auto normal = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(_ab, _ac));
+		DirectX::XMFLOAT3 val;
+		DirectX::XMStoreFloat3(&val, normal);
+		return val;
+	}
+
 	std::unique_ptr<ModelObject> CreateModelObject(const wchar_t* file) {
+		std::unique_ptr<ModelObject> my_model(new ModelObject);
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
 		std::string err;
@@ -22,6 +35,7 @@ namespace Rainbow3D {
 		for (std::size_t mesh_index = 0; mesh_index < mesh_size; ++mesh_index) {
 			std::size_t primitives_size = model.meshes[mesh_index].primitives.size();
 			for (std::size_t primitives_index = 0; primitives_index < primitives_size; ++primitives_index) {
+				SubMesh submesh;
 				tinygltf::Primitive& primitive = model.meshes[mesh_index].primitives[primitives_index];
 				{
 					const tinygltf::Accessor& positionAccessor = model.accessors[primitive.attributes["POSITION"]];
@@ -29,13 +43,10 @@ namespace Rainbow3D {
 					const tinygltf::Buffer& positionBuffer = model.buffers[positionBufferView.buffer];
 					const float* positions = reinterpret_cast<const float*>(&positionBuffer.data[positionBufferView.byteOffset + positionAccessor.byteOffset]);
 					for (std::size_t i = 0; i < positionAccessor.count; ++i) {
-
-						//auto str = std::to_string(positions[i * 3 + 0]) + " " + std::to_string(positions[i * 3 + 1]) + " " + std::to_string(positions[i * 3 + 2]) + "\n";
-						//OutputDebugStringA(str.c_str());
+						submesh.vertices.push_back(DirectX::XMFLOAT3(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2]));
 					}
 				}
 
-				// index
 				if (primitive.indices != -1) {
 					const tinygltf::Accessor& indicesAccessor = model.accessors[primitive.indices];
 					const tinygltf::BufferView& indicesBufferView = model.bufferViews[indicesAccessor.bufferView];
@@ -43,17 +54,51 @@ namespace Rainbow3D {
 
 					const uint16* indices = reinterpret_cast<const uint16*>(&indicesBuffer.data[indicesBufferView.byteOffset + indicesAccessor.byteOffset]);
 					for (std::size_t i = 0; i < indicesAccessor.count; ++i) {
-
-					//	//auto str = std::to_string(positions[i * 3 + 0]) + " " + std::to_string(positions[i * 3 + 1]) + " " + std::to_string(positions[i * 3 + 2]) + "\n";
-					//	//OutputDebugStringA(str.c_str());
+						submesh.indices.push_back(indices[i]);
 					}
 				}
 				else {
-					// 0 1 2 3 4 5 6 7 8
+					auto vertices_size = submesh.vertices.size();
+					for (std::size_t i = 0; i < vertices_size; ++i) {
+						submesh.indices.push_back(i);
+					}
 				}
 				// normal
 
-				// TANGENT
+				if (primitive.attributes.contains("NORMAL")) {
+					const tinygltf::Accessor& normalAccessor = model.accessors[primitive.attributes["NORMAL"]];
+					const tinygltf::BufferView& normalBufferView = model.bufferViews[normalAccessor.bufferView];
+					const tinygltf::Buffer& normalBuffer = model.buffers[normalBufferView.buffer];
+					const float* normals = reinterpret_cast<const float*>(&normalBuffer.data[normalBufferView.byteOffset + normalAccessor.byteOffset]);
+					for (std::size_t i = 0; i < normalAccessor.count; ++i) {
+						submesh.normals.push_back(DirectX::XMFLOAT3(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2]));
+					}
+				}
+				else {
+					submesh.normals.resize(submesh.vertices.size());
+					auto triangle_size = submesh.indices.size() / 3;
+					for (std::size_t i = 0; i < triangle_size; ++i) {
+						auto normal = GetNormal(submesh.vertices[submesh.indices[i * 3 + 0]], submesh.vertices[submesh.indices[i * 3 + 1]], submesh.vertices[submesh.indices[i * 3 + 2]]);
+						submesh.normals[submesh.indices[i * 3 + 0]] = normal;
+						submesh.normals[submesh.indices[i * 3 + 1]] = normal;
+						submesh.normals[submesh.indices[i * 3 + 2]] = normal;
+					}
+				}
+				my_model->AddSubMesh(submesh);
+				//if (primitive.attributes.contains("TANGENT")) {
+				//	const tinygltf::Accessor& tangentAccessor = model.accessors[primitive.attributes["TANGENT"]];
+				//	const tinygltf::BufferView& tangentBufferView = model.bufferViews[tangentAccessor.bufferView];
+				//	const tinygltf::Buffer& tangentBuffer = model.buffers[tangentBufferView.buffer];
+				//	const float* tangent = reinterpret_cast<const float*>(&tangentBuffer.data[tangentBufferView.byteOffset + tangentAccessor.byteOffset]);
+
+				//	for (std::size_t i = 0; i < tangentAccessor.count; ++i) {
+				//		submesh.tangents.push_back(DirectX::XMFLOAT3(tangent[i * 3 + 0], tangent[i * 3 + 1], tangent[i * 3 + 2]));
+				//	}
+				//}
+				//else {
+				//	//throw;
+				//}
+
 
 				// uv0
 
@@ -62,6 +107,6 @@ namespace Rainbow3D {
 			}
 		}
 
-		return nullptr;
+		return my_model;
 	}
 }

@@ -107,7 +107,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> pipeline;
     device4->CreateGraphicsPipelineState(&psoDesc, __uuidof(&pipeline), &pipeline);
 
-    CreateModelObject(L"C:\\Users\\WangYuzhi\\Desktop\\glTF-Sample-Models-master\\2.0\\Sponza\\glTF\\Sponza.gltf");
+    auto model = CreateModelObject(L"C:\\Users\\WangYuzhi\\Desktop\\glTF-Sample-Models-master\\2.0\\Sponza\\glTF\\Sponza.gltf");
+
     window->RunLoop(Draw, device.get(), swapchain.get(), mainRenderAllocator, mainRenderlist.Get(), rootsignature.Get(), mesh_pipeline.Get());
     device.reset();
     return 0;
