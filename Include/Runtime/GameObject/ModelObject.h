@@ -8,7 +8,7 @@ namespace Rainbow3D {
 	public:
 		void LoadMesh() {}
 	private:
-		
+		MeshComponent mesh;
 	};
 
 	std::unique_ptr<ModelObject> CreateModelObject(const wchar_t*file);
