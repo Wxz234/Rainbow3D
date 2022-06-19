@@ -8,6 +8,7 @@
 #include <string>
 #include <cstddef>
 
+
 namespace Rainbow3D {
 	std::unique_ptr<ModelObject> CreateModelObject(const wchar_t* file) {
 		tinygltf::Model model;
@@ -22,28 +23,43 @@ namespace Rainbow3D {
 			std::size_t primitives_size = model.meshes[mesh_index].primitives.size();
 			for (std::size_t primitives_index = 0; primitives_index < primitives_size; ++primitives_index) {
 				tinygltf::Primitive& primitive = model.meshes[mesh_index].primitives[primitives_index];
+				{
+					const tinygltf::Accessor& positionAccessor = model.accessors[primitive.attributes["POSITION"]];
+					const tinygltf::BufferView& positionBufferView = model.bufferViews[positionAccessor.bufferView];
+					const tinygltf::Buffer& positionBuffer = model.buffers[positionBufferView.buffer];
+					const float* positions = reinterpret_cast<const float*>(&positionBuffer.data[positionBufferView.byteOffset + positionAccessor.byteOffset]);
+					for (std::size_t i = 0; i < positionAccessor.count; ++i) {
 
-				const tinygltf::Accessor& positionAccessor = model.accessors[primitive.attributes["POSITION"]];
-				const tinygltf::BufferView& positionBufferView = model.bufferViews[positionAccessor.bufferView];
-				const tinygltf::Buffer& positionBuffer = model.buffers[positionBufferView.buffer];
-				const float* positions = reinterpret_cast<const float*>(&positionBuffer.data[positionBufferView.byteOffset + positionAccessor.byteOffset]);
-				for (std::size_t i = 0; i < positionAccessor.count; ++i) {
-
-					//auto str = std::to_string(positions[i * 3 + 0]) + " " + std::to_string(positions[i * 3 + 1]) + " " + std::to_string(positions[i * 3 + 2]) + "\n";
-					//OutputDebugStringA(str.c_str());
+						//auto str = std::to_string(positions[i * 3 + 0]) + " " + std::to_string(positions[i * 3 + 1]) + " " + std::to_string(positions[i * 3 + 2]) + "\n";
+						//OutputDebugStringA(str.c_str());
+					}
 				}
+
 				// index
 				if (primitive.indices != -1) {
+					const tinygltf::Accessor& indicesAccessor = model.accessors[primitive.indices];
+					const tinygltf::BufferView& indicesBufferView = model.bufferViews[indicesAccessor.bufferView];
+					const tinygltf::Buffer& indicesBuffer = model.buffers[indicesBufferView.buffer];
 
+					const uint16* indices = reinterpret_cast<const uint16*>(&indicesBuffer.data[indicesBufferView.byteOffset + indicesAccessor.byteOffset]);
+					for (std::size_t i = 0; i < indicesAccessor.count; ++i) {
+
+					//	//auto str = std::to_string(positions[i * 3 + 0]) + " " + std::to_string(positions[i * 3 + 1]) + " " + std::to_string(positions[i * 3 + 2]) + "\n";
+					//	//OutputDebugStringA(str.c_str());
+					}
 				}
 				else {
-
+					// 0 1 2 3 4 5 6 7 8
 				}
+				// normal
+
+				// TANGENT
+
+				// uv0
+
+				// uv1
 
 			}
-			//const tinygltf::Primitive& positionPrimitive = model.meshes[mesh_index].primitives
-			//const tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
-			//const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 		}
 
 		return nullptr;
