@@ -1,8 +1,9 @@
 #pragma once
-
+#include "Core/TypeDefine.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
+#include <memory>
 
 namespace Rainbow3D{
     class Device {
