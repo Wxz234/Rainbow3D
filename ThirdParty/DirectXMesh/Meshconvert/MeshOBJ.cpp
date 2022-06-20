@@ -13,7 +13,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4005)
 #define WIN32_LEAN_AND_MEAN
-#define NOMINMAX 1
+#define NOMINMAX
 #define NODRAWTEXT
 #define NOGDI
 #define NOMCX
@@ -26,7 +26,6 @@
 
 #include <cwchar>
 #include <iterator>
-#include <locale>
 #include <new>
 
 using namespace DirectX;
@@ -186,8 +185,6 @@ HRESULT Mesh::ExportToOBJ(const wchar_t* szFileName, size_t nMaterials, const Ma
 _Use_decl_annotations_
 void Mesh::ExportToOBJ(std::wostream& os, size_t nMaterials, const Material* materials) const
 {
-    os.imbue(std::locale::classic());
-
     if (!mtlFileName.empty())
         os << L"mtllib ./" << mtlFileName << L".mtl" << std::endl;
 
@@ -237,7 +234,7 @@ void Mesh::ExportToOBJ(std::wostream& os, size_t nMaterials, const Material* mat
         os << L"f ";
         for (size_t point = 0; point < 3; ++point)
         {
-            const uint32_t i = mIndices[face * 3 + point] + 1;
+            uint32_t i = mIndices[face * 3 + point] + 1;
 
             os << i << L"/";
             if (mTexCoords)

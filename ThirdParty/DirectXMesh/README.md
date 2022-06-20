@@ -6,11 +6,11 @@ http://go.microsoft.com/fwlink/?LinkID=324981
 
 Copyright (c) Microsoft Corporation.
 
-**May 9, 2022**
+**September 28, 2021**
 
 This package contains DirectXMesh, a shared source library for performing various geometry content processing operations including generating normals and tangent frames, triangle adjacency computations, vertex cache optimization, and meshlet generation.
 
-This code is designed to build with Visual Studio 2019 (16.9 or later), Visual Studio 2022, or clang for Windows v11 or later. Use of the Windows 10 May 2020 Update SDK ([19041](https://walbourn.github.io/windows-10-may-2020-update-sdk/)) or later is required.
+This code is designed to build with Visual Studio 2017 ([15.9](https://walbourn.github.io/vs-2017-15-9-update/)), Visual Studio 2019, or clang for Windows v9 or later. It is recommended that you make use of the Windows 10 May 2020 Update SDK ([19041](https://walbourn.github.io/windows-10-may-2020-update-sdk/)) or later.
 
 These components are designed to work without requiring any content from the legacy DirectX SDK. For details, see [Where is the DirectX SDK?](https://aka.ms/dxsdk).
 
@@ -39,7 +39,7 @@ Documentation is available on the [GitHub wiki](https://github.com/Microsoft/Dir
 
 ## Notices
 
-All content and source code for this package are subject to the terms of the [MIT License](https://github.com/microsoft/DirectXMesh/blob/main/LICENSE).
+All content and source code for this package are subject to the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
 For the latest version of DirectXMesh, bug reports, etc. please visit the project site on [GitHub](https://github.com/microsoft/DirectXMesh).
 
@@ -51,9 +51,7 @@ For the latest version of DirectXMesh, bug reports, etc. please visit the projec
 
   * Use the enum type instead of ``DWORD`` if building up flags values locally with bitmask operations. For example, ```CNORM_FLAGS flags = CNORM_DEFAULT; if (...) flags |= CNORM_WIND_CW;```
 
-* The UWP projects and the Win10 classic desktop project include configurations for the ARM64 platform. Building these requires installing the ARM64 toolset.
-
-* When using clang/LLVM for the ARM64 platform, the Windows 11 SDK ([22000](https://walbourn.github.io/windows-sdk-for-windows-11/)) is required.
+* The UWP projects and the VS 2019 Win10 classic desktop project include configurations for the ARM64 platform. These require VS 2017 (15.9 update) or VS 2019 to build, with the ARM64 toolset installed.
 
 ## Support
 

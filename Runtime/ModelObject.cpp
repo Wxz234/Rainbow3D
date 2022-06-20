@@ -1,4 +1,4 @@
-
+#include "Runtime/GameObject/ModelObject.h"
 
 namespace Rainbow3D {
 

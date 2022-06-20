@@ -31,42 +31,42 @@
     <ProjectGuid>{6D4CFD0E-8772-462A-9AC1-7DBAD9C16880}</ProjectGuid>
     <RootNamespace>meshconvert</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|X64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -90,38 +90,38 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>meshconvert</TargetName>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
-    <OutDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>meshconvert</TargetName>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>meshconvert</TargetName>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">
-    <OutDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>meshconvert</TargetName>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
-    <OutDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>meshconvert</TargetName>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|X64'">
-    <OutDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>Bin\Desktop_2019\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\Desktop_2017\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>meshconvert</TargetName>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
@@ -138,7 +138,6 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ole32.lib;windowscodecs.lib;uuid.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -170,7 +169,6 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ole32.lib;windowscodecs.lib;uuid.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -201,7 +199,6 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ole32.lib;oleaut32.lib;windowscodecs.lib;uuid.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -234,7 +231,6 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ole32.lib;oleaut32.lib;windowscodecs.lib;uuid.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -267,7 +263,6 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ole32.lib;oleaut32.lib;windowscodecs.lib;uuid.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -300,7 +295,6 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ole32.lib;oleaut32.lib;windowscodecs.lib;uuid.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -322,7 +316,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectXMesh\DirectXMesh_Desktop_2019.vcxproj">
+    <ProjectReference Include="..\DirectXMesh\DirectXMesh_Desktop_2017.vcxproj">
       <Project>{6857f086-f6fe-4150-9ed7-7446f1c1c220}</Project>
     </ProjectReference>
   </ItemGroup>

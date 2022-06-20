@@ -47,7 +47,7 @@ namespace FVF
         if ((fvfCode & ((D3DFVF_RESERVED0 | D3DFVF_RESERVED2) & ~D3DFVF_POSITION_MASK)) != 0)
             return 0;
 
-        const size_t numCoords = (fvfCode & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
+        size_t numCoords = (fvfCode & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
         if (numCoords > 8)
             return 0;
 
@@ -132,7 +132,7 @@ namespace FVF
                 if (pDecl->Type >= std::size(g_declTypeSizes))
                     return 0;
 
-                const size_t slotSize = g_declTypeSizes[pDecl->Type];
+                size_t slotSize = g_declTypeSizes[pDecl->Type];
                 if (currentSize < slotSize + pDecl->Offset)
                     currentSize = slotSize + pDecl->Offset;
             }
@@ -171,7 +171,7 @@ namespace FVF
                 if (pDecl->Type >= std::size(g_declTypeSizes))
                     return 0;
 
-                const size_t slotSize = g_declTypeSizes[pDecl->Type];
+                size_t slotSize = g_declTypeSizes[pDecl->Type];
                 if (currentSize < slotSize + pDecl->Offset)
                     currentSize = slotSize + pDecl->Offset;
             }
@@ -199,7 +199,7 @@ namespace FVF
         return length;
     }
 
-    _Success_(return)
+    _Success_(return != false)
     inline bool CreateDeclFromFVF(uint32_t fvfCode, std::vector<D3DVERTEXELEMENT9>& decl)
     {
         static constexpr size_t s_texCoordSizes[] =
@@ -215,7 +215,7 @@ namespace FVF
         if ((fvfCode & ((D3DFVF_RESERVED0 | D3DFVF_RESERVED2) & ~D3DFVF_POSITION_MASK)) != 0)
             return false;
 
-        const uint32_t nTexCoords = (fvfCode & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
+        uint32_t nTexCoords = (fvfCode & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
         if (nTexCoords > 8)
             return false;
 
@@ -336,7 +336,7 @@ namespace FVF
         {
             for (uint32_t t = 0; t < nTexCoords; ++t)
             {
-                const size_t texCoordSize = s_texCoordSizes[(fvfCode >> (16 + t * 2)) & 0x3];
+                size_t texCoordSize = s_texCoordSizes[(fvfCode >> (16 + t * 2)) & 0x3];
 
                 // D3DDECLTYPE_FLOAT1 = 0, D3DDECLTYPE_FLOAT4 = 3
                 decl.emplace_back(
@@ -354,7 +354,7 @@ namespace FVF
     }
 
 #ifdef __d3d11_h__
-    _Success_(return)
+    _Success_(return != false)
         inline bool CreateInputLayoutFromFVF(uint32_t fvfCode, std::vector<D3D11_INPUT_ELEMENT_DESC>& il)
     {
         static constexpr DXGI_FORMAT s_blendFormats[] =
@@ -378,7 +378,7 @@ namespace FVF
         if ((fvfCode & ((D3DFVF_RESERVED0 | D3DFVF_RESERVED2) & ~D3DFVF_POSITION_MASK)) != 0)
             return false;
 
-        const uint32_t nTexCoords = (fvfCode & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
+        uint32_t nTexCoords = (fvfCode & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
         if (nTexCoords > 8)
             return false;
 
@@ -483,7 +483,7 @@ namespace FVF
         {
             for (uint32_t t = 0; t < nTexCoords; ++t)
             {
-                const size_t index = (fvfCode >> (16 + t * 2)) & 0x3;
+                size_t index = (fvfCode >> (16 + t * 2)) & 0x3;
                 il.emplace_back(
                     D3D11_INPUT_ELEMENT_DESC{ "TEXCOORD", static_cast<UINT>(t),
                         s_texCoordFormats[index],
@@ -497,7 +497,7 @@ namespace FVF
 #endif // __d3d11_h__
 
 #ifdef __d3d12_h__
-    _Success_(return)
+    _Success_(return != false)
         inline bool CreateInputLayoutFromFVF(uint32_t fvfCode, std::vector<D3D12_INPUT_ELEMENT_DESC>& il)
     {
         static constexpr DXGI_FORMAT s_blendFormats[] =

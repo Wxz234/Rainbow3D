@@ -27,4 +27,8 @@ x64
 /Tests
 /wiki
 /out
-/CMakeUserPresets.json
+/CMakeCache.txt
+/CMakeFiles
+/Makefile
+/cmake
+/cmake_install.cmake

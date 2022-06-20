@@ -1,5 +1,7 @@
 #pragma once
+#include "Mesh/SubMesh.h"
 #include "Runtime/Component/Component.h"
+#include <vector>
 namespace Rainbow3D {
 
 
@@ -7,6 +9,6 @@ namespace Rainbow3D {
 	public:
 
 	private:
-		//std::vector<SubMesh> submeshes;
+		std::vector<SubMesh> submeshes;
 	};
 }

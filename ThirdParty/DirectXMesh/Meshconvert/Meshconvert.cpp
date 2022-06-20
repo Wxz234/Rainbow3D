@@ -25,7 +25,6 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <cwchar>
 #include <cwctype>
 #include <fstream>
@@ -162,6 +161,11 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+HRESULT LoadFrom_glTF(const wchar_t* szFilename,
+    std::unique_ptr<Mesh>& inMesh, std::vector<Mesh::Material>& inMaterial);
+HRESULT LoadFrom_glTFBinary(const wchar_t* szFilename,
+    std::unique_ptr<Mesh>& inMesh, std::vector<Mesh::Material>& inMaterial);
 
 HRESULT LoadFromOBJ(const wchar_t* szFilename,
     std::unique_ptr<Mesh>& inMesh, std::vector<Mesh::Material>& inMaterial,
@@ -358,7 +362,7 @@ namespace
     {
         while (pValue->name)
         {
-            const size_t cchName = wcslen(pValue->name);
+            size_t cchName = wcslen(pValue->name);
 
             if (cch + cchName + 2 >= 80)
             {
@@ -381,7 +385,7 @@ namespace
         wchar_t appName[_MAX_PATH] = {};
         if (GetModuleFileNameW(nullptr, appName, static_cast<DWORD>(std::size(appName))))
         {
-            const DWORD size = GetFileVersionInfoSizeW(appName, nullptr);
+            DWORD size = GetFileVersionInfoSizeW(appName, nullptr);
             if (size > 0)
             {
                 auto verInfo = std::make_unique<uint8_t[]>(size);
@@ -463,7 +467,7 @@ namespace
 
         LPWSTR errorText = nullptr;
 
-        const DWORD result = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+        DWORD result = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ALLOCATE_BUFFER,
             nullptr, static_cast<DWORD>(hr),
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&errorText), 0, nullptr);
 
@@ -474,8 +478,9 @@ namespace
             swprintf_s(desc, L": %ls", errorText);
 
             size_t len = wcslen(desc);
-            if (len >= 1)
+            if (len >= 2)
             {
+                desc[len - 2] = 0;
                 desc[len - 1] = 0;
             }
 
@@ -524,7 +529,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             if (*pValue)
                 *pValue++ = 0;
 
-            const uint32_t dwOption = LookupByName(pArg, g_pOptions);
+            uint32_t dwOption = LookupByName(pArg, g_pOptions);
 
             if (!dwOption || (dwOptions & (1 << dwOption)))
             {
@@ -690,7 +695,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         }
         else if (wcspbrk(pArg, L"?*") != nullptr)
         {
-            const size_t count = conversion.size();
+            size_t count = conversion.size();
             SearchForFiles(pArg, conversion, (dwOptions & (1 << OPT_RECURSIVE)) != 0);
             if (conversion.size() <= count)
             {
@@ -762,6 +767,14 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             wprintf(L"\nERROR: Autodesk FBX files not supported\n");
             return 1;
         }
+        else if (_wcsicmp(ext, L".gltf") == 0)
+        {
+            hr = LoadFrom_glTF(pConv->szSrc, inMesh, inMaterial);
+        }
+        else if (_wcsicmp(ext, L".glb") == 0)
+        {
+            hr = LoadFrom_glTFBinary(pConv->szSrc, inMesh, inMaterial);
+        }
         else
         {
             hr = LoadFromOBJ(pConv->szSrc, inMesh, inMaterial,
@@ -775,7 +788,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         }
 
         size_t nVerts = inMesh->GetVertexCount();
-        const size_t nFaces = inMesh->GetFaceCount();
+        size_t nFaces = inMesh->GetFaceCount();
 
         if (!nVerts || !nFaces)
         {
@@ -825,7 +838,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         if (dwOptions & ((1 << OPT_OPTIMIZE) | (1 << OPT_CLEAN)))
         {
             // Adjacency
-            const float epsilon = (dwOptions & (1 << OPT_GEOMETRIC_ADJ)) ? 1e-5f : 0.f;
+            float epsilon = (dwOptions & (1 << OPT_GEOMETRIC_ADJ)) ? 1e-5f : 0.f;
 
             hr = inMesh->GenerateAdjacency(epsilon);
             if (FAILED(hr))
@@ -854,7 +867,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             }
             else
             {
-                const size_t nNewVerts = inMesh->GetVertexCount();
+                size_t nNewVerts = inMesh->GetVertexCount();
                 if (nVerts != nNewVerts)
                 {
                     wprintf(L" [%zu vertex dups] ", nNewVerts - nVerts);
