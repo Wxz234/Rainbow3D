@@ -1,6 +1,12 @@
 #include "Runtime/GameObject/ModelObject.h"
-
+#include "ThirdParty/DirectXMesh/DirectXMesh.h"
+#include "ThirdParty/UVatlas/UVAtlas.h"
+#include "ThirdParty/tinygltf/tiny_gltf.h"
 namespace Rainbow3D {
+
+	std::unique_ptr<ModelObject> CreateModelObject(const wchar_t* file) {
+		return nullptr;
+	}
 
 /*	DirectX::XMFLOAT3 GetNormal(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b, const DirectX::XMFLOAT3& c) {
 		auto _a = DirectX::XMLoadFloat3(&a);
