@@ -1,0 +1,52 @@
+add_library (UVAtlas STATIC
+    UVAtlas/maxheap.hpp
+    UVAtlas/pch.h
+    UVAtlas/geodesics/ApproximateOneToAll.cpp
+    UVAtlas/geodesics/ApproximateOneToAll.h
+    UVAtlas/geodesics/datatypes.h
+    UVAtlas/geodesics/ExactOneToAll.cpp
+    UVAtlas/geodesics/ExactOneToAll.h
+    UVAtlas/geodesics/mathutils.cpp
+    UVAtlas/geodesics/mathutils.h
+    UVAtlas/geodesics/minheap.hpp
+    UVAtlas/isochart/barycentricparam.cpp
+    UVAtlas/isochart/basemeshinfo.cpp
+    UVAtlas/isochart/basemeshinfo.h
+    UVAtlas/isochart/callbackschemer.h
+    UVAtlas/isochart/graphcut.cpp
+    UVAtlas/isochart/graphcut.h
+    UVAtlas/isochart/imtcomputation.cpp
+    UVAtlas/isochart/isochart.cpp
+    UVAtlas/isochart/isochart.h
+    UVAtlas/isochart/isochartconfig.h
+    UVAtlas/isochart/isochartengine.cpp
+    UVAtlas/isochart/isochartengine.h
+    UVAtlas/isochart/isochartmesh.cpp
+    UVAtlas/isochart/isochartmesh.h
+    UVAtlas/isochart/isochartutil.cpp
+    UVAtlas/isochart/isochartutil.h
+    UVAtlas/isochart/isomap.cpp
+    UVAtlas/isochart/isomap.h
+    UVAtlas/isochart/lscmparam.cpp
+    UVAtlas/isochart/mergecharts.cpp
+    UVAtlas/isochart/meshapplyisomap.cpp
+    UVAtlas/isochart/meshcommon.inl
+    UVAtlas/isochart/meshoptimizeboundaries.cpp
+    UVAtlas/isochart/meshoptimizestretch.cpp
+    UVAtlas/isochart/meshpartitionchart.cpp
+    UVAtlas/isochart/packingcharts.cpp
+    UVAtlas/isochart/progressivemesh.cpp
+    UVAtlas/isochart/progressivemesh.h
+    UVAtlas/isochart/sparsematrix.hpp
+    UVAtlas/isochart/SymmetricMatrix.hpp
+    UVAtlas/isochart/UVAtlas.cpp
+    UVAtlas/isochart/UVAtlasRepacker.cpp
+    UVAtlas/isochart/UVAtlasRepacker.h
+    UVAtlas/isochart/vertiter.cpp
+    UVAtlas/isochart/vertiter.h
+    UVAtlas/isochart/Vis_Maxflow.cpp
+    UVAtlas/isochart/Vis_Maxflow.h
+)
+target_include_directories(UVAtlas PRIVATE UVAtlas/inc UVAtlas/ UVAtlas/geodesics)
+#target_precompile_headers(UVAtlas PRIVATE UVAtlas/pch.h)
+set_target_properties(UVAtlas PROPERTIES FOLDER "ThirdParty")
