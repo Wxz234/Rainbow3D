@@ -13,11 +13,11 @@
 
 #pragma once
 
-#if defined(WIN32) || defined(_WIN32)
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4005)
 #define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
+#define NOMINMAX 1
 #define NODRAWTEXT
 #define NOGDI
 #define NOMCX
@@ -43,7 +43,7 @@
 #include <vector>
 #include <unordered_map>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <filesystem>
 #endif
 
@@ -77,7 +77,7 @@ public:
 
         InFile.imbue(std::locale::classic());
 
-#ifdef WIN32
+#ifdef _WIN32
         wchar_t fname[_MAX_FNAME] = {};
         _wsplitpath_s(szFileName, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, nullptr, 0);
         name = fname;
@@ -257,20 +257,14 @@ public:
                     // list. Store the index in the Indices array. The Vertices and Indices
                     // lists will eventually become the Vertex Buffer and Index Buffer for
                     // the mesh.
-                    uint32_t index = AddVertex(vertexIndex, &vertex, vertexCache);
+                    const uint32_t index = AddVertex(vertexIndex, &vertex, vertexCache);
                     if (index == uint32_t(-1))
                         return E_OUTOFMEMORY;
 
-#pragma warning( suppress : 4127 )
-                    if (sizeof(index_t) == 2 && (index >= 0xFFFF))
+                    constexpr uint32_t maxIndex = (sizeof(index_t) == 2) ? UINT16_MAX : UINT32_MAX;
+                    if (index >= maxIndex)
                     {
-                        // Too many indices for 16-bit IB!
-                        return E_FAIL;
-                    }
-#pragma warning( suppress : 4127 )
-                    else if (sizeof(index_t) == 4 && (index >= 0xFFFFFFFF))
-                    {
-                        // Too many indices for 32-bit IB!
+                        // Too many indices for IB!
                         return E_FAIL;
                     }
 
@@ -281,7 +275,7 @@ public:
                     bool faceEnd = false;
                     for (;;)
                     {
-                        wchar_t p = InFile.peek();
+                        const wchar_t p = InFile.peek();
 
                         if ('\n' == p || !InFile)
                         {
@@ -305,12 +299,12 @@ public:
                 }
 
                 // Convert polygons to triangles
-                uint32_t i0 = faceIndex[0];
+                const uint32_t i0 = faceIndex[0];
                 uint32_t i1 = faceIndex[1];
 
                 for (size_t j = 2; j < iFace; ++j)
                 {
-                    uint32_t index = faceIndex[j];
+                    const uint32_t index = faceIndex[j];
                     indices.emplace_back(static_cast<index_t>(i0));
                     if (ccw)
                     {
@@ -383,7 +377,7 @@ public:
         // If an associated material file was found, read that in as well.
         if (*strMaterialFilename)
         {
-#ifdef WIN32
+#ifdef _WIN32
             wchar_t ext[_MAX_EXT] = {};
             _wsplitpath_s(strMaterialFilename, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
 
@@ -578,7 +572,7 @@ public:
 
         Clear();
 
-#ifdef WIN32
+#ifdef _WIN32
         wchar_t fname[_MAX_FNAME] = {};
         _wsplitpath_s(szFileName, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, nullptr, 0);
         name = fname;
@@ -611,8 +605,12 @@ public:
         vertices.resize(numVertices);
         vboFile.read(reinterpret_cast<char*>(vertices.data()), sizeof(Vertex) * numVertices);
 
+#if (__cplusplus >= 201703L)
+        if constexpr (sizeof(index_t) == 2)
+#else
 #pragma warning( suppress : 4127 )
         if (sizeof(index_t) == 2)
+#endif
         {
             indices.resize(numIndices);
             vboFile.read(reinterpret_cast<char*>(indices.data()), sizeof(uint16_t) * numIndices);
@@ -742,7 +740,7 @@ private:
 
         if (!path.empty())
         {
-#ifdef WIN32
+#ifdef _WIN32
             wcscpy_s(texture, maxChar, path.c_str());
 #else
             wcscpy(texture, path.c_str());

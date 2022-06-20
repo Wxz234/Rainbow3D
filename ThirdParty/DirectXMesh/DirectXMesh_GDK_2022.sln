@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1209
+# Visual Studio Version 17
+VisualStudioVersion = 16.0.30404.54
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXMesh_GDK_2017", "DirectXMesh\DirectXMesh_GDK_2017.vcxproj", "{0B019AFB-D02B-430A-9331-B2A9D6D9C0C3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXMesh_GDK_2022", "DirectXMesh\DirectXMesh_GDK_2022.vcxproj", "{0B019AFB-D02B-430A-9331-B2A9D6D9C0C3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{82132EEB-BC56-4626-9022-AF9940033F39}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DBC86AB6-3D3C-4879-8DD7-3CFC505ABAC4}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
@@ -46,6 +46,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {529D37BD-AE2F-4A47-8A86-A7F46C0727C9}
+		SolutionGuid = {7C261958-9DC2-41CC-A677-D8507C24FCDF}
 	EndGlobalSection
 EndGlobal

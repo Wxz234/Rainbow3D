@@ -8,9 +8,6 @@
     <Filter Include="Wavefront OBJ">
       <UniqueIdentifier>{a500efbf-87f7-4c3b-b7c4-a3505a25d342}</UniqueIdentifier>
     </Filter>
-    <Filter Include="glTF">
-      <UniqueIdentifier>{fe47bb9e-2c81-4fb2-bdfb-75a97a2b0356}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Meshconvert.cpp" />
@@ -19,16 +16,10 @@
     <ClCompile Include="MeshOBJ.cpp">
       <Filter>Wavefront OBJ</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh_glTF.cpp">
-      <Filter>glTF</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Utilities\WaveFrontReader.h">
       <Filter>Wavefront OBJ</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>glTF</Filter>
     </ClInclude>
     <ClInclude Include="SDKMesh.h" />
   </ItemGroup>
