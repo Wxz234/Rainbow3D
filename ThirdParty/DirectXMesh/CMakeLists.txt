@@ -1,9 +1,3 @@
-
-set(LIBRARY_HEADERS
-    DirectXMesh/DirectXMesh.h
-    DirectXMesh/DirectXMesh.inl)
-
-
 add_library(DirectXMesh STATIC     
     DirectXMesh/DirectXMeshP.h
     DirectXMesh/scoped.h
