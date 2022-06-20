@@ -1,5 +1,5 @@
 #pragma once
-#include "CorePreDef.h"
+
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -62,7 +62,7 @@ namespace Rainbow3D{
         uint32 m_frameIndex = 0;
         HANDLE m_fenceEvent;
         Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
-        uint64 m_fenceValues[RAINBOW_FRAME_COUNT]{};
+        uint64 m_fenceValues[3]{};
 
         Microsoft::WRL::ComPtr<ID3D12Device6> m_device;
         Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_main_queue;

@@ -1,5 +1,5 @@
 #pragma once
-#include "CorePreDef.h"
+
 #include "Platform/Window.h"
 #include "Graphics/Device.h"
 #include <d3d12.h>
@@ -18,7 +18,7 @@ namespace Rainbow3D {
             CreateDXGIFactory2(flag, __uuidof(**(&m_factory)), &m_factory);
 
             DXGI_SWAP_CHAIN_DESC1 _desc = {};
-            _desc.BufferCount = RAINBOW_FRAME_COUNT;
+            _desc.BufferCount = 3;
             _desc.Width = w;
             _desc.Height = h;
             _desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -38,14 +38,14 @@ namespace Rainbow3D {
             Microsoft::WRL::ComPtr<ID3D12Device> m_device;
             queue->GetDevice(__uuidof(**(&m_device)), &m_device);
             D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-            rtvHeapDesc.NumDescriptors = RAINBOW_FRAME_COUNT;
+            rtvHeapDesc.NumDescriptors = 3;
             rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
             rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
             m_device->CreateDescriptorHeap(&rtvHeapDesc, __uuidof(**(&m_rtvHeap)), &m_rtvHeap);
             m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
             auto rtvHandle = m_rtvHeap->GetCPUDescriptorHandleForHeapStart();
-            for (uint32 n = 0; n < RAINBOW_FRAME_COUNT; ++n)
+            for (uint32 n = 0; n < 3; ++n)
             {
                 Microsoft::WRL::ComPtr<ID3D12Resource> m_renderTargets;
                 m_swapchain->GetBuffer(n, __uuidof(**(&m_renderTargets)), &m_renderTargets);

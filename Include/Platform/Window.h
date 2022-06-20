@@ -1,5 +1,6 @@
 #pragma once
-#include "CorePreDef.h"
+#include "Core/TypeDefine.h"
+#include <Windows.h>
 #include <functional>
 namespace Rainbow3D {
 
